@@ -62,9 +62,29 @@ export default function LandingPage() {
           </button>
         </div>
 
+        <div className="mt-16 pt-8 text-center" style={{ borderTop: '1px solid var(--color-border)' }}>
+          <h3
+            className="text-xl font-semibold mb-3"
+            style={{ fontFamily: 'var(--font-heading)', color: 'var(--color-text-primary)' }}
+          >
+            Managing a team?
+          </h3>
+          <p className="text-base leading-relaxed mb-6" style={{ color: 'var(--color-text-secondary)' }}>
+            Create a team, invite members, and get a live dashboard with health scores, archetype distribution, and actionable recommendations.
+          </p>
+          <button
+            onClick={() => navigate('/login')}
+            className="px-8 py-3 rounded text-base font-medium transition-all duration-150 cursor-pointer"
+            style={{ backgroundColor: 'transparent', color: 'var(--color-accent)', border: '1px solid var(--color-accent)' }}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'var(--color-accent)'; e.currentTarget.style.color = 'white'; }}
+            onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--color-accent)'; }}
+          >
+            Sign In / Sign Up &rarr;
+          </button>
+        </div>
+
         <div className="mt-16 pt-8 text-center text-sm" style={{ borderTop: '1px solid var(--color-border)', color: 'var(--color-text-secondary)' }}>
           <p>Everything runs in your browser. No data is sent anywhere.</p>
-          <p className="mt-2">Built by Jonny Armstrong</p>
         </div>
       </div>
     </Layout>
