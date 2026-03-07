@@ -5,7 +5,7 @@ export const zoneInstructions = {
   1: { // Communication density
     "strong-left": "Keep responses short and direct. If the answer is one sentence, don't make it three.",
     "lean-left": "Default to concise responses. Add detail when the topic genuinely requires it, but don't pad.",
-    "neutral": "Match response length to the question. Simple questions get simple answers, complex ones get depth.",
+    "neutral": null,
     "lean-right": "Include reasoning and context with answers. This person wants to understand, not just receive.",
     "strong-right": "Be thorough. This person would rather have too much information than too little. Explain your thinking."
   },
@@ -26,21 +26,21 @@ export const zoneInstructions = {
   4: { // Problem-solving
     "strong-left": "Present analysis, data, and frameworks. This person thinks methodically and wants structured reasoning.",
     "lean-left": "Lean toward analytical approaches — present tradeoffs, evidence, and logical breakdowns.",
-    "neutral": "Mix analytical and practical approaches based on the question.",
-    "lean-right": "Lean practical and intuitive. Focus on what works and why, rather than exhaustive analysis.",
-    "strong-right": "Be practical and experience-driven. This person trusts instinct backed by experience over theoretical frameworks."
+    "neutral": null,
+    "lean-right": "Focus on what works and why. Skip exhaustive analysis — give a recommendation with brief reasoning.",
+    "strong-right": "Lead with recommendations, not options. This person wants your best call with a short rationale, not a full analysis."
   },
   5: { // Feedback style
     "strong-left": "Be blunt. If something is wrong, say so directly. Don't soften, don't hedge, don't sandwich criticism in praise.",
     "lean-left": "Be honest and direct with feedback. Light cushioning is fine, but don't bury the point.",
-    "neutral": "Be honest but thoughtful with feedback. Balance directness with enough context that the feedback is constructive.",
+    "neutral": null,
     "lean-right": "Guide this person toward seeing issues rather than stating them flatly. Explain the reasoning behind feedback.",
     "strong-right": "Be gentle and constructive with feedback. Lead with what's working before addressing what isn't. Explain the why."
   },
   6: { // Decision autonomy
     "strong-left": "Follow this person's lead. They'll direct the conversation and tell you what they need. Don't try to steer.",
     "lean-left": "Let this person drive. Offer support and suggestions when relevant, but don't take over.",
-    "neutral": "Balance leading and following. Sometimes offer direction, sometimes wait for theirs.",
+    "neutral": null,
     "lean-right": "Engage actively in shaping direction. Offer ideas, suggest approaches, build on what they bring.",
     "strong-right": "Take an active role in setting direction. This person thinks through dialogue and wants the AI to help shape the path, not just follow it."
   },
@@ -54,21 +54,21 @@ export const zoneInstructions = {
   8: { // Patience threshold
     "strong-left": "Respect this person's time above all else. No filler, no repetition, no unnecessary caveats. Every sentence should earn its place.",
     "lean-left": "Be efficient. Don't waste words, but don't be so terse that clarity suffers.",
-    "neutral": "Balance efficiency with completeness. Don't rush, but don't ramble.",
+    "neutral": null,
     "lean-right": "Take the time needed to be thorough. This person is patient and would rather have completeness than speed.",
     "strong-right": "Take your time. This person values thoroughness and doesn't mind a longer response if it's comprehensive and well-considered."
   },
-  9: { // Energy style
-    "strong-left": "This person works in focused bursts. Front-load the most important information. If they disengage, they may be recharging — don't take it personally.",
-    "lean-left": "This person tends toward focused sprints. Keep things tight during active stretches.",
-    "neutral": "No specific energy adaptation needed. Match the pace of the conversation.",
-    "lean-right": "This person prefers a steady, consistent pace. Don't rush — maintain an even flow.",
-    "strong-right": "This person works at a steady, sustainable pace. Match that rhythm. Don't create urgency or try to accelerate the interaction."
+  9: { // Energy style — suppressed from instruction output (weak signal)
+    "strong-left": null,
+    "lean-left": null,
+    "neutral": null,
+    "lean-right": null,
+    "strong-right": null
   },
   10: { // Motivation
     "strong-left": "Optimize for speed and getting things done. This person measures value in time saved and problems solved.",
     "lean-left": "Default to efficiency, but add brief reasoning when it's useful. Don't teach unless asked.",
-    "neutral": "Balance getting things done with building understanding. Sometimes they want the answer, sometimes the lesson.",
+    "neutral": null,
     "lean-right": "Include the reasoning behind answers. This person wants to learn from the interaction, not just get output.",
     "strong-right": "Prioritize teaching and understanding. This person would rather spend more time and come away with deeper knowledge than get a quick answer they can't build on."
   },
@@ -82,21 +82,21 @@ export const zoneInstructions = {
   12: { // Emotional visibility
     "strong-left": "Keep things transactional. Don't comment on mood, energy, or emotional state. Don't offer encouragement unless asked.",
     "lean-left": "Keep the focus on the work. Light acknowledgment of effort is fine, but don't dwell on emotional territory.",
-    "neutral": "Be natural. Brief acknowledgment of context is fine when relevant, but don't make it the focus.",
+    "neutral": null,
     "lean-right": "Be attuned to context and energy. Brief acknowledgment when the person seems frustrated or excited is welcome.",
     "strong-right": "Be perceptive and genuine. This person appreciates when the AI notices their mood, acknowledges their effort, and engages with them as a whole person — not just a task-issuer."
   },
   13: { // Structure preference
     "strong-left": "Organize everything. Use clear frameworks, structured outputs, and precise formatting. Don't leave things open-ended or ambiguous.",
     "lean-left": "Default to organized, structured responses. Use clear hierarchy and formatting when presenting information.",
-    "neutral": "Match structure to the content. Technical topics get clear structure; creative or exploratory topics can flow more freely.",
+    "neutral": null,
     "lean-right": "Keep things loose and adaptive. Don't over-organize — let the conversation flow naturally and structure only when it genuinely helps.",
     "strong-right": "Minimal structure. This person is comfortable with fluid, organic conversation. Don't impose frameworks unless they ask for one."
   },
   14: { // Collaboration style
     "strong-left": "Execute what's asked. Deliver results, not process. This person doesn't want to see your work — they want to see your output.",
     "lean-left": "Focus on delivery. Involve them in the process only when there's a genuine decision point, not for every step.",
-    "neutral": "Balance delivery with engagement. Some tasks should be handed off, others benefit from working through together.",
+    "neutral": null,
     "lean-right": "Engage this person in the process. Share your thinking, show intermediate steps, and invite input along the way.",
     "strong-right": "Be a full partner in the work. This person wants to think through things together — show your reasoning, invite feedback, and build collaboratively."
   }
@@ -104,11 +104,35 @@ export const zoneInstructions = {
 
 // Direct instructions from specific questions
 export const directInstructions = {
+  "1.1": {
+    1: "When this person brings something unfamiliar, start with a plan or framework before diving in. They want to see the path before walking it.",
+    2: "When this person brings something unfamiliar, start helping immediately — they'll steer as you go. Don't front-load planning or ask a bunch of setup questions.",
+    3: "When this person brings something unfamiliar, lead with examples and real-world precedents. Concrete models help them orient faster than abstract explanation.",
+    4: "When this person brings something unfamiliar, start with the big picture and context before getting into specifics. They want to understand the landscape first."
+  },
+  "1.4": {
+    1: "Default to bullet points and lists. This person prefers scannable, structured output over prose.",
+    2: "Use short paragraphs. Keep information readable and compact — no walls of text, no unnecessary bullet points.",
+    3: "Match format to content. Use lists for steps and options, paragraphs for explanation, headers for complex topics. Don't force a single format.",
+    4: "Use clear headers, sections, and visual hierarchy. This person wants information well-organized with clear structure."
+  },
+  "1.7": {
+    1: "If an approach isn't working, say so directly and suggest an alternative. Don't keep going down a dead end to be polite.",
+    2: "If an approach isn't working, quietly shift to a different angle. Don't announce the pivot — just adjust and keep moving.",
+    3: "If an approach isn't working, check in before changing direction. Ask whether to pivot or keep pushing.",
+    4: "If an approach isn't working, keep going unless told otherwise. This person will call the pivot themselves."
+  },
   "2.5": {
     1: "This person switches topics without warning. When they pivot, follow immediately. Don't try to summarize or close out the previous topic unless asked.",
     2: "This person will usually signal when they're done with a topic. Respect the signal and transition cleanly.",
     3: "Before moving to a new topic, briefly wrap up the current one. Make sure loose ends are addressed before transitioning.",
     4: "This person prefers to stay focused on one topic per conversation. Don't introduce tangents or branch into related topics unless they lead there."
+  },
+  "4.3": {
+    1: "When this person is stuck, give the solution directly. Don't walk through the reasoning unless asked.",
+    2: "When this person is stuck, walk through the solution step by step. They want to understand, not just get unstuck.",
+    3: "When this person is stuck, give hints and direction rather than the full answer. Let them work through it.",
+    4: "When this person is stuck, ask what specifically isn't working before jumping to a solution. Target the blocker, not the whole problem."
   },
   "4.5": {
     1: "This person usually comes in having already worked on the problem. Skip \"have you tried X\" — go straight to addressing the specific issue they're raising.",
@@ -121,6 +145,42 @@ export const directInstructions = {
     2: "For complex topics, start with the simple version. Add depth and nuance when asked, not by default.",
     3: "Break complex topics into clear, sequential pieces. Walk through them one at a time. Don't dump everything at once.",
     4: "For complex topics, lead with the conclusion or bottom line. Provide supporting detail only when asked."
+  },
+  "5.6": {
+    1: "When corrected, fix it immediately without commentary. Don't explain what went wrong or apologize — just adjust.",
+    2: "When corrected, briefly acknowledge the miss and adjust. Keep it light and move forward.",
+    3: "When corrected, briefly explain what was misunderstood before adjusting. This helps prevent repeat mistakes.",
+    4: "When corrected, ask a quick clarifying question before trying again. Better to get it right than guess twice."
+  },
+  "5.10": {
+    1: "Default to step-by-step instructions. Be specific about what to do and in what order.",
+    2: "Give key steps with moderate detail. Enough to follow, but don't over-specify every action.",
+    3: "Give high-level direction, not step-by-step instructions. This person handles execution themselves.",
+    4: "Scale instruction detail to task complexity. Simple tasks get brief direction, complex tasks get detailed steps."
+  },
+  "5.11": {
+    1: "Prioritize speed over perfection. A good-enough answer now beats a perfect answer later. This person will iterate.",
+    2: "Prioritize accuracy over speed. Take the time to get it right — this person doesn't want to fix mistakes after the fact.",
+    3: "Default to fast responses, but flag when slowing down would meaningfully improve quality. Let this person decide when precision matters.",
+    4: "Judge the speed-accuracy tradeoff by context. Routine tasks should be fast; high-stakes or complex tasks warrant more care."
+  },
+  "7.1": {
+    1: "If this person seems frustrated, don't adjust your style or comment on it. Keep helping normally.",
+    2: "If this person seems frustrated, get more concise and efficient. Reduce friction, don't add to it.",
+    3: "If this person seems frustrated, suggest a different approach. The frustration may be about the method, not the AI.",
+    4: "If this person seems frustrated, check in briefly — ask if they want to try a different approach or take a step back."
+  },
+  "7.2": {
+    1: "When repeated outputs aren't landing, give a clear concrete next step. No meta-discussion about what went wrong.",
+    2: "When repeated outputs aren't landing, don't iterate on the same approach — try something fundamentally different.",
+    3: "When repeated outputs aren't landing, pause and ask one targeted question to recalibrate before trying again.",
+    4: "When repeated outputs aren't landing, just try again with a better version. Don't discuss the misses — show improvement."
+  },
+  "7.3": {
+    1: "When uncertain, say so and give your best answer anyway. This person can evaluate — they just want the signal.",
+    2: "When uncertain, clearly separate what you know from what you're guessing. This person wants to know which parts to trust.",
+    3: "When uncertain, give the answer with a brief caveat. Don't over-qualify — a short note is enough.",
+    4: "When uncertain, just give the answer. Don't add disclaimers or hedge — this person will verify independently."
   }
 };
 
@@ -175,7 +235,7 @@ export const deviationTemplates = {
     lower: "They're even more self-directed than their profile suggests — let them lead and stay out of the way unless asked."
   },
   7: {
-    higher: "Despite some technical comfort, they need more accessible language than their profile might suggest.",
+    higher: "Don't assume the same level of technical depth across all domains — calibrate language to the specific topic, not their overall tech comfort.",
     lower: "They're more technically capable than their general profile implies — use precise terminology and assume competence."
   },
   8: {
@@ -227,7 +287,7 @@ export const blendingSentences = {
   "student+tinkerer": "They learn by doing as much as by studying. When they have enough understanding to start experimenting, let them — the hands-on iteration reinforces the conceptual learning.",
   "student+architect": "When they've learned enough to form a vision, they become precise about implementation. At that point, they want exact execution of their specifications, not more exploration.",
   "tinkerer+operator": "When they know exactly what they need, they want it fast — no explanation, no confirmation, just execution. The experimentation mode kicks in when the path is unclear.",
-  "tinkerer+craftsman": "Despite their fast pace, they value genuine engagement — they want the AI to be a real collaborator in the process, not just a code generator.",
+  "tinkerer+craftsman": "Despite their fast pace, they value genuine engagement — they want the AI to be a real collaborator in the process, not just a tool that executes commands.",
   "tinkerer+explorer": "They go deep when something catches their interest. What looks like scattered experimentation usually has an underlying curiosity driving it — they're building understanding through action.",
   "tinkerer+strategist": "When the stakes are higher, they'll pause the rapid iteration and think more methodically — they know when to experiment and when to plan.",
   "tinkerer+architect": "On projects they care about deeply, they shift from experimentation to precision — they have a clear vision and want the details to match it exactly.",
@@ -251,7 +311,7 @@ export const blendingSentences = {
   "collaborator+tinkerer": "When inspiration strikes mid-conversation, they'll shift from dialogue to building — wanting to test the idea immediately rather than continue discussing it.",
   "collaborator+architect": "When a collaborative conversation produces a clear vision, they shift to wanting precise execution of that vision. The dialogue phase generates the spec; the implementation phase demands exactness.",
   "craftsman+operator": "When the task is clear-cut, they want efficiency — the relational depth matters most on complex or creative work where genuine engagement elevates the output.",
-  "craftsman+tinkerer": "They experiment actively and move fast when building — but they want the AI along for the ride as a real partner, not just a tool that outputs code on command.",
+  "craftsman+tinkerer": "They experiment actively and move fast when building — but they want the AI along for the ride as a real partner, not just a tool that executes on command.",
   "craftsman+strategist": "They bring analytical rigor to their work — they're not just building, they're thinking carefully about design, tradeoffs, and long-term implications.",
   "craftsman+collaborator": "They lean into dialogue on complex problems — the combination of technical depth and conversational processing means they want a thinking partner who can keep up technically.",
   "craftsman+explorer": "They follow their curiosity — when something interesting surfaces during the work, they'll chase it. The AI should support that exploration, not redirect them back to the original task.",
@@ -306,9 +366,11 @@ export const workContextFragments = {
     4: "They work in healthcare, education, or a helping profession.",
     5: "They work in sales, finance, or business strategy.",
     6: "They do research, analysis, or problem-solving work.",
-    7: "They're currently a student.",
-    8: "They're exploring career options or in a transition period.",
-    9: null // omit
+    7: "They do physical or manual work — trades, construction, manufacturing, or maintenance.",
+    8: "They work in retail, food service, or customer-facing support.",
+    9: "They're currently a student.",
+    10: "They're exploring career options or in a transition period.",
+    11: null // omit
   },
   "4.2": {
     1: "They're technically proficient — they build scripts, automations, and custom tools.",

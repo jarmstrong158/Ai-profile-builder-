@@ -5,13 +5,13 @@ export const sections = [
     questions: [
       {
         id: "1.1",
-        text: "When you're facing something new and unfamiliar, what's your first move?",
+        text: "When you bring something unfamiliar to the AI, what kind of help do you want first?",
         type: "single",
         options: [
-          { value: 1, text: "Break it down — figure out the pieces before jumping in" },
-          { value: 2, text: "Dive in and figure it out as I go — I learn by doing" },
-          { value: 3, text: "Find someone who's already done it and learn from their approach" },
-          { value: 4, text: "Get the big picture first, then decide where to start" }
+          { value: 1, text: "Give me a plan or framework before we start — I want to see the path" },
+          { value: 2, text: "Just start helping — I'll steer as we go" },
+          { value: 3, text: "Show me how others have approached similar things — examples help me orient" },
+          { value: 4, text: "Help me understand the big picture first, then we'll get into details" }
         ]
       },
       {
@@ -38,13 +38,13 @@ export const sections = [
       },
       {
         id: "1.4",
-        text: "When you're learning something new, which sounds most like you?",
+        text: "When the AI gives you information, how do you prefer it formatted?",
         type: "single",
         options: [
-          { value: 1, text: "I grind at it until it clicks — repetition and persistence are how I learn" },
-          { value: 2, text: "I need a clear path — steps, structure, a sense of progression" },
-          { value: 3, text: "I pick things up fast when I can connect them to something I already know" },
-          { value: 4, text: "I learn best in conversation — talking it through with someone helps me process" }
+          { value: 1, text: "Bullet points and lists — easy to scan and reference" },
+          { value: 2, text: "Short paragraphs — readable but not a wall of text" },
+          { value: 3, text: "Whatever fits the content — lists for steps, paragraphs for explanations" },
+          { value: 4, text: "Structured with clear headers and sections — I like visual hierarchy" }
         ]
       },
       {
@@ -71,13 +71,13 @@ export const sections = [
       },
       {
         id: "1.7",
-        text: "When you've got a lot on your plate, how do you figure out what to tackle first?",
+        text: "When an approach isn't working, what do you want the AI to do?",
         type: "single",
         options: [
-          { value: 1, text: "I already know — I've got a system, or at least a running priority list in my head" },
-          { value: 2, text: "I go with whatever feels most urgent or has the most momentum right now" },
-          { value: 3, text: "I need to get it out of my head first — write it down, map it out, then decide" },
-          { value: 4, text: "I just pick one thing and go — if I overthink the order I lose steam" }
+          { value: 1, text: "Tell me straight — 'this isn't working, here's a better approach'" },
+          { value: 2, text: "Try a different angle without making a big deal about it" },
+          { value: 3, text: "Ask me if I want to pivot or keep pushing on this path" },
+          { value: 4, text: "Let me call it — I'll say when I want to change direction" }
         ]
       }
     ]
@@ -223,9 +223,11 @@ export const sections = [
           { value: 4, text: "I work in healthcare, education, or a helping profession" },
           { value: 5, text: "I work in sales, finance, or business strategy" },
           { value: 6, text: "I do research, analysis, or problem-solving work" },
-          { value: 7, text: "I'm in school or actively studying something" },
-          { value: 8, text: "I'm exploring my options or in a transition" },
-          { value: 9, text: "I'd rather keep this general" }
+          { value: 7, text: "I do physical or manual work — trades, construction, manufacturing, maintenance" },
+          { value: 8, text: "I work in retail, food service, or customer-facing support" },
+          { value: 9, text: "I'm in school or actively studying something" },
+          { value: 10, text: "I'm exploring my options or in a transition" },
+          { value: 11, text: "I'd rather keep this general" }
         ]
       },
       {
@@ -241,13 +243,13 @@ export const sections = [
       },
       {
         id: "4.3",
-        text: "When you're stuck on something and can't figure it out, what's your usual move?",
+        text: "When you're stuck on something, what kind of help from the AI is most useful?",
         type: "single",
         options: [
-          { value: 1, text: "Dig in — search for answers, read documentation, keep grinding until it clicks" },
-          { value: 2, text: "Phone a friend — find someone who's dealt with it and get their take" },
-          { value: 3, text: "Experiment — try different approaches and see what happens" },
-          { value: 4, text: "Step away and come back fresh — I think better after a break" }
+          { value: 1, text: "Give me the answer directly — if I want to learn how, I'll ask" },
+          { value: 2, text: "Walk me through it so I understand the solution, not just the answer" },
+          { value: 3, text: "Point me in the right direction but let me work it out myself" },
+          { value: 4, text: "Ask what specifically I'm stuck on and target just that piece" }
         ]
       },
       {
@@ -334,13 +336,13 @@ export const sections = [
       },
       {
         id: "5.6",
-        text: "When the AI gives you a response that's not what you wanted, what's your move?",
+        text: "When you correct the AI or tell it to change direction, how should it handle that?",
         type: "single",
         options: [
-          { value: 1, text: "Tell it directly what was wrong and what I want instead" },
-          { value: 2, text: "Try rephrasing my original question" },
-          { value: 3, text: "Give it more context about what I'm actually trying to do" },
-          { value: 4, text: "Start over with a cleaner ask" }
+          { value: 1, text: "Just fix it and move on — no need to explain what went wrong" },
+          { value: 2, text: "Briefly acknowledge the miss, adjust, and keep going" },
+          { value: 3, text: "Explain what it misunderstood so the same thing doesn't happen again" },
+          { value: 4, text: "Ask a clarifying question to make sure it gets what I actually want" }
         ]
       },
       {
@@ -374,6 +376,28 @@ export const sections = [
           { value: 2, text: "Show me checkpoints along the way — I want to course-correct before you go too far" },
           { value: 3, text: "Walk me through your thinking as you go — I want to follow the process" },
           { value: 4, text: "Depends on the task — sometimes I want full visibility, sometimes just surprise me with the result" }
+        ]
+      },
+      {
+        id: "5.10",
+        text: "When you ask the AI for help with a task, how detailed should its guidance be?",
+        type: "single",
+        options: [
+          { value: 1, text: "Step by step — tell me exactly what to do and in what order" },
+          { value: 2, text: "Key steps with enough detail to follow — I'll fill in the gaps" },
+          { value: 3, text: "High-level direction — just tell me the approach, I'll handle execution" },
+          { value: 4, text: "Match it to the task — simple things need less, complex things need more" }
+        ]
+      },
+      {
+        id: "5.11",
+        text: "When there's a tradeoff between speed and getting it perfect, which way should the AI lean?",
+        type: "single",
+        options: [
+          { value: 1, text: "Speed — give me something good enough fast, I'll refine if needed" },
+          { value: 2, text: "Accuracy — take the time to get it right the first time" },
+          { value: 3, text: "Default to fast, but flag when slowing down would significantly improve the result" },
+          { value: 4, text: "Read the context and judge — routine stuff fast, important stuff careful" }
         ]
       }
     ]
@@ -423,40 +447,40 @@ export const sections = [
   },
   {
     id: 7,
-    title: "Your Energy & Headspace",
+    title: "When Things Get Tough",
     optional: true,
     questions: [
       {
         id: "7.1",
-        text: "When you're having a rough day and you bring a task to the AI, what would help most?",
+        text: "If the AI can tell you're frustrated — short messages, repeated corrections — what should it do?",
         type: "single",
         options: [
-          { value: 1, text: "Keep it business as usual — I don't need the AI to read my mood" },
-          { value: 2, text: "Be a little more patient — shorter answers, less back-and-forth" },
-          { value: 3, text: "Check in briefly if I seem off, but don't make it a thing" },
-          { value: 4, text: "I wouldn't notice either way — I just want the task done" }
+          { value: 1, text: "Don't change anything — just keep going" },
+          { value: 2, text: "Get more concise — shorter responses, less friction" },
+          { value: 3, text: "Suggest a different approach — maybe the current path isn't working" },
+          { value: 4, text: "Ask if I want to try something different or take a step back" }
         ]
       },
       {
         id: "7.2",
-        text: "When something isn't working and you're getting frustrated, what helps you push through?",
+        text: "When the AI's output keeps missing the mark and you've had to correct it multiple times, what's the best recovery?",
         type: "single",
         options: [
-          { value: 1, text: "A clear next step — just tell me exactly what to do" },
-          { value: 2, text: "Reassurance that I'm on the right track, even if it's hard" },
-          { value: 3, text: "A different angle — if this approach isn't working, suggest another one" },
-          { value: 4, text: "Space — let me step back and come back to it" }
+          { value: 1, text: "Give me a clear, concrete next step — no fluff" },
+          { value: 2, text: "Stop and try a completely different approach" },
+          { value: 3, text: "Ask one targeted question to recalibrate, then try again" },
+          { value: 4, text: "Just try again — no discussion about it, just a better version" }
         ]
       },
       {
         id: "7.3",
-        text: "How do you generally manage your energy throughout the day?",
+        text: "When the AI doesn't know something or isn't confident in its answer, what should it do?",
         type: "single",
         options: [
-          { value: 1, text: "I go hard and recharge later — bursts of focus then downtime" },
-          { value: 2, text: "Steady pace — I like consistency and routine" },
-          { value: 3, text: "It depends on the day — some days I'm on, some days I'm not" },
-          { value: 4, text: "I'm usually running on fumes — efficiency matters because I don't have a lot of extra bandwidth" }
+          { value: 1, text: "Say it's not sure and give its best guess — I'll evaluate" },
+          { value: 2, text: "Only state what it's confident about, clearly flag what it's not" },
+          { value: 3, text: "Give me the answer with a brief caveat — don't overthink the disclaimer" },
+          { value: 4, text: "Just give the answer — I'll figure out if it's right" }
         ]
       }
     ]

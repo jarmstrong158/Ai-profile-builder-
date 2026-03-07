@@ -49,8 +49,8 @@ export default function SharedProfilePage() {
       instructions.push(zoneInstructions[i][zones[i]]);
     }
 
-    // Build markdown
-    const mdLines = [
+    // Build markdown (copy version excludes tips)
+    const coreMdLines = [
       '# AI Profile',
       '*Shared via AI Onboard*',
       '',
@@ -59,7 +59,11 @@ export default function SharedProfilePage() {
       ...aboutMeParts.map(p => p + '\n'),
       '## How to Work With Me',
       '',
-      ...instructions.map(i => `- ${i}`),
+      ...instructions.map(i => `- ${i}`)
+    ];
+
+    const fullMdLines = [
+      ...coreMdLines,
       '',
       '## Getting Better Results',
       '',
@@ -77,7 +81,8 @@ export default function SharedProfilePage() {
           primary: archetypeResult.primaryName,
           secondary: archetypeResult.secondaryName
         },
-        markdown: mdLines.join('\n')
+        markdown: fullMdLines.join('\n'),
+        markdownForCopy: coreMdLines.join('\n')
       },
       scores,
       zones,
