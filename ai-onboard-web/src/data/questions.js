@@ -220,9 +220,14 @@ export const sections = [
           { value: 1, text: "I manage people, operations, or logistics" },
           { value: 2, text: "I do technical or hands-on work — building, coding, engineering, fixing" },
           { value: 3, text: "I do creative or communication-focused work — writing, design, marketing, media" },
-          { value: 4, text: "I'm in school or actively studying something" },
-          { value: 5, text: "I'm exploring my options or in a transition" },
-          { value: 6, text: "I'd rather keep this general" }
+          { value: 4, text: "I work in healthcare, education, or a helping profession" },
+          { value: 5, text: "I work in sales, finance, or business strategy" },
+          { value: 6, text: "I do research, analysis, or problem-solving work" },
+          { value: 7, text: "I do physical or manual work — trades, construction, manufacturing, maintenance" },
+          { value: 8, text: "I work in retail, food service, or customer-facing support" },
+          { value: 9, text: "I'm in school or actively studying something" },
+          { value: 10, text: "I'm exploring my options or in a transition" },
+          { value: 11, text: "I'd rather keep this general" }
         ]
       },
       {

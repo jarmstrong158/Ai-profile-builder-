@@ -303,9 +303,14 @@ export const workContextFragments = {
     1: "They work in management, operations, or logistics.",
     2: "They work in technical or hands-on roles — building, coding, engineering, or fixing.",
     3: "They work in creative or communication-focused roles — writing, design, marketing, or media.",
-    4: "They're currently a student.",
-    5: "They're exploring career options or in a transition period.",
-    6: null // omit
+    4: "They work in healthcare, education, or a helping profession.",
+    5: "They work in sales, finance, or business strategy.",
+    6: "They do research, analysis, or problem-solving work.",
+    7: "They do physical or manual work — trades, construction, manufacturing, or maintenance.",
+    8: "They work in retail, food service, or customer-facing support.",
+    9: "They're currently a student.",
+    10: "They're exploring career options or in a transition period.",
+    11: null // omit
   },
   "4.2": {
     1: "They're technically proficient — they build scripts, automations, and custom tools.",

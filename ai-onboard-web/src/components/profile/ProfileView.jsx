@@ -65,21 +65,6 @@ export default function ProfileView({ profile, scores, zones, archetype, onRetak
         </div>
       </ProfileSection>
 
-      {/* Getting Better Results */}
-      <ProfileSection title="Getting Better Results">
-        <p className="text-sm mb-4" style={{ color: 'var(--color-text-secondary)' }}>
-          Tips for getting the most out of your AI conversations:
-        </p>
-        <div className="flex flex-col gap-4">
-          {profile.tips.map((tip, idx) => (
-            <div key={idx} className="text-[14px] sm:text-[15px] leading-relaxed">
-              <span className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{tip.bold}</span>{' '}
-              <span style={{ color: 'var(--color-text-secondary)' }}>{tip.text}</span>
-            </div>
-          ))}
-        </div>
-      </ProfileSection>
-
       {/* Custom Notes */}
       {profile.customNotes && (
         <ProfileSection title="Custom Notes">
@@ -96,8 +81,23 @@ export default function ProfileView({ profile, scores, zones, archetype, onRetak
         </ProfileSection>
       )}
 
+      {/* Getting Better Results (visible but excluded from copy) */}
+      <ProfileSection title="Getting Better Results">
+        <p className="text-sm mb-4" style={{ color: 'var(--color-text-secondary)' }}>
+          Tips for getting the most out of your AI conversations:
+        </p>
+        <div className="flex flex-col gap-4">
+          {profile.tips.map((tip, idx) => (
+            <div key={idx} className="text-[14px] sm:text-[15px] leading-relaxed">
+              <span className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{tip.bold}</span>{' '}
+              <span style={{ color: 'var(--color-text-secondary)' }}>{tip.text}</span>
+            </div>
+          ))}
+        </div>
+      </ProfileSection>
+
       <ActionBar
-        markdown={profile.markdown}
+        markdown={profile.markdownForCopy}
         onRetake={onRetake}
         onShare={onShare}
         isSharedView={isSharedView}

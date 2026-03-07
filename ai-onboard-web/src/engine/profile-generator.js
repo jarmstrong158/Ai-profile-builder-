@@ -42,7 +42,19 @@ export function generateProfile(answers, zones, archetypeResult, deviations) {
   }
   sections.push("");
 
-  // Getting Better Results
+  // Custom Notes (before tips so they're included in copy version)
+  const customNotes = answers["6.3"];
+  if (customNotes && typeof customNotes === "string" && customNotes.trim()) {
+    sections.push("## Custom Notes");
+    sections.push("");
+    sections.push(customNotes.trim());
+    sections.push("");
+  }
+
+  // Snapshot without tips for copy/download
+  const markdownForCopy = sections.join("\n").trimEnd();
+
+  // Getting Better Results (display only, excluded from copy)
   sections.push("## Getting Better Results");
   sections.push("");
   sections.push("Here are some tips for getting the most out of your AI conversations:");
@@ -51,16 +63,7 @@ export function generateProfile(answers, zones, archetypeResult, deviations) {
     sections.push(`- **${tip.bold}** ${tip.text}`);
   }
 
-  // Custom Notes
-  const customNotes = answers["6.3"];
-  if (customNotes && typeof customNotes === "string" && customNotes.trim()) {
-    sections.push("");
-    sections.push("## Custom Notes");
-    sections.push("");
-    sections.push(customNotes.trim());
-  }
-
-  return sections.join("\n");
+  return { markdown: sections.join("\n"), markdownForCopy };
 }
 
 /**
@@ -196,6 +199,6 @@ export function generateProfileData(answers, normalizedScores, zones, archetypeR
       primary: archetypeResult.primaryName,
       secondary: archetypeResult.secondaryName
     },
-    markdown: generateProfile(answers, zones, archetypeResult, deviations)
+    ...generateProfile(answers, zones, archetypeResult, deviations)
   };
 }
