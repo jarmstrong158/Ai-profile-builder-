@@ -15,6 +15,7 @@ export default function QuestionCard({
 }) {
   const [localSelected, setLocalSelected] = useState(selectedValue);
   const autoAdvanceTimer = useRef(null);
+  const containerRef = useRef(null);
 
   useEffect(() => {
     setLocalSelected(selectedValue);
@@ -44,18 +45,15 @@ export default function QuestionCard({
       const rules = question.exclusivityRules;
 
       if (current.includes(value)) {
-        // Deselect
         const next = current.filter(v => v !== value);
         onSelect(next);
         return next;
       } else {
         let next = [...current, value];
-        // Apply exclusivity rules
         if (rules && rules[value]) {
           next = next.filter(v => !rules[value].includes(v));
           if (!next.includes(value)) next.push(value);
         }
-        // Check if any existing selection excludes this new value
         if (rules) {
           for (const [exclusive, excludes] of Object.entries(rules)) {
             if (Number(exclusive) !== value && next.includes(Number(exclusive)) && excludes.includes(value)) {
@@ -78,11 +76,58 @@ export default function QuestionCard({
   const isMulti = question.type === 'multi';
   const isText = question.type === 'text';
   const canProceed = isText || isMulti
-    ? true // multi and text always allow proceeding (skippable in individual mode)
+    ? true
     : localSelected !== null && localSelected !== undefined;
 
+  // Keyboard navigation
+  useEffect(() => {
+    function handleKeyDown(e) {
+      // Don't capture keys when typing in textarea
+      if (e.target.tagName === 'TEXTAREA') {
+        if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+          e.preventDefault();
+          onNext();
+        }
+        return;
+      }
+
+      // Number keys 1-9 select options
+      const num = parseInt(e.key, 10);
+      if (num >= 1 && num <= 9 && !isText && question.options) {
+        const optionIndex = num - 1;
+        if (optionIndex < question.options.length) {
+          e.preventDefault();
+          const option = question.options[optionIndex];
+          if (isMulti) {
+            handleMultiSelect(option.value);
+          } else {
+            handleSingleSelect(option.value);
+          }
+        }
+        return;
+      }
+
+      // Enter advances on multi/text questions
+      if (e.key === 'Enter' && (isMulti || isText)) {
+        e.preventDefault();
+        onNext();
+        return;
+      }
+
+      // Backspace goes back (when not in text input)
+      if (e.key === 'Backspace' && showBack) {
+        e.preventDefault();
+        onBack();
+        return;
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [question, isMulti, isText, showBack, onNext, onBack, handleSingleSelect, handleMultiSelect]);
+
   return (
-    <div className="w-full max-w-[600px] mx-auto">
+    <div className="w-full max-w-[600px] mx-auto" ref={containerRef}>
       <div className="mb-6">
         <p className="text-sm font-medium mb-2" style={{ color: 'var(--color-accent)' }}>
           {sectionTitle} ({questionNumber}/{totalInSection})
@@ -90,12 +135,7 @@ export default function QuestionCard({
         <h2 className="text-2xl font-medium leading-snug" style={{ fontFamily: 'var(--font-heading)', color: 'var(--color-text-primary)' }}>
           {question.text}
         </h2>
-        {isMulti && question.instruction && (
-          <p className="mt-2 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-            {question.instruction}
-          </p>
-        )}
-        {isText && question.instruction && (
+        {(isMulti || isText) && question.instruction && (
           <p className="mt-2 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
             {question.instruction}
           </p>
@@ -118,9 +158,14 @@ export default function QuestionCard({
             }}
             placeholder="Type your response..."
           />
-          <p className="mt-1 text-xs" style={{ color: 'var(--color-text-secondary)' }}>
-            {typeof localSelected === 'string' ? localSelected.length : 0} / 1000
-          </p>
+          <div className="flex justify-between mt-1">
+            <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
+              {typeof localSelected === 'string' ? localSelected.length : 0} / 1000
+            </p>
+            <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
+              {"\u2318"}/Ctrl+Enter to continue
+            </p>
+          </div>
         </div>
       ) : (
         <div className="flex flex-col gap-3 mb-6">
@@ -152,7 +197,7 @@ export default function QuestionCard({
           </button>
         ) : <div />}
 
-        {(isMulti || isText || !autoAdvance) && (
+        {(isMulti || isText || !autoAdvance) ? (
           <button
             onClick={onNext}
             disabled={!canProceed}
@@ -162,8 +207,12 @@ export default function QuestionCard({
               color: 'white'
             }}
           >
-            Next &rarr;
+            {isMulti ? 'Next (Enter) \u2192' : 'Next \u2192'}
           </button>
+        ) : (
+          <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
+            Press 1-{question.options?.length || 4} to select
+          </p>
         )}
       </div>
     </div>

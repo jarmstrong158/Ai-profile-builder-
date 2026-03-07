@@ -86,6 +86,11 @@ function goBackPosition(state) {
 
 function quizReducer(state, action) {
   switch (action.type) {
+    case 'STAGE_ANSWER': {
+      // Store answer without advancing position (for multi-select/text mid-edit)
+      return { ...state, answers: { ...state.answers, [action.questionId]: action.value } };
+    }
+
     case 'ANSWER': {
       const newAnswers = { ...state.answers, [action.questionId]: action.value };
       const next = advancePosition({ ...state, answers: newAnswers });
