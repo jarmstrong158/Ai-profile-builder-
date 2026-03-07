@@ -8,7 +8,7 @@ export default function LandingPage() {
     <Layout>
       {/* Hero */}
       <div className="min-h-[calc(100vh-48px)] flex items-center justify-center">
-        <div className="max-w-[640px] text-center">
+        <div className="max-w-[640px] text-center px-4">
           <h1
             className="text-4xl sm:text-5xl font-bold mb-6"
             style={{ fontFamily: 'var(--font-heading)', color: 'var(--color-text-primary)' }}
@@ -34,7 +34,7 @@ export default function LandingPage() {
       </div>
 
       {/* How it works */}
-      <div className="max-w-[640px] mx-auto pb-24">
+      <div className="max-w-[640px] mx-auto pb-24 px-4">
         <div className="flex flex-col gap-16">
           <InfoSection
             title="You answer. We score."
