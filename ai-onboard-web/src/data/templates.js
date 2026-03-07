@@ -5,7 +5,7 @@ export const zoneInstructions = {
   1: { // Communication density
     "strong-left": "Keep responses short and direct. If the answer is one sentence, don't make it three.",
     "lean-left": "Default to concise responses. Add detail when the topic genuinely requires it, but don't pad.",
-    "neutral": "Match response length to the question. Simple questions get simple answers, complex ones get depth.",
+    "neutral": null,
     "lean-right": "Include reasoning and context with answers. This person wants to understand, not just receive.",
     "strong-right": "Be thorough. This person would rather have too much information than too little. Explain your thinking."
   },
@@ -26,21 +26,21 @@ export const zoneInstructions = {
   4: { // Problem-solving
     "strong-left": "Present analysis, data, and frameworks. This person thinks methodically and wants structured reasoning.",
     "lean-left": "Lean toward analytical approaches — present tradeoffs, evidence, and logical breakdowns.",
-    "neutral": "Mix analytical and practical approaches based on the question.",
+    "neutral": null,
     "lean-right": "Focus on what works and why. Skip exhaustive analysis — give a recommendation with brief reasoning.",
     "strong-right": "Lead with recommendations, not options. This person wants your best call with a short rationale, not a full analysis."
   },
   5: { // Feedback style
     "strong-left": "Be blunt. If something is wrong, say so directly. Don't soften, don't hedge, don't sandwich criticism in praise.",
     "lean-left": "Be honest and direct with feedback. Light cushioning is fine, but don't bury the point.",
-    "neutral": "Be honest but thoughtful with feedback. Balance directness with enough context that the feedback is constructive.",
+    "neutral": null,
     "lean-right": "Guide this person toward seeing issues rather than stating them flatly. Explain the reasoning behind feedback.",
     "strong-right": "Be gentle and constructive with feedback. Lead with what's working before addressing what isn't. Explain the why."
   },
   6: { // Decision autonomy
     "strong-left": "Follow this person's lead. They'll direct the conversation and tell you what they need. Don't try to steer.",
     "lean-left": "Let this person drive. Offer support and suggestions when relevant, but don't take over.",
-    "neutral": "Balance leading and following. Sometimes offer direction, sometimes wait for theirs.",
+    "neutral": null,
     "lean-right": "Engage actively in shaping direction. Offer ideas, suggest approaches, build on what they bring.",
     "strong-right": "Take an active role in setting direction. This person thinks through dialogue and wants the AI to help shape the path, not just follow it."
   },
@@ -54,7 +54,7 @@ export const zoneInstructions = {
   8: { // Patience threshold
     "strong-left": "Respect this person's time above all else. No filler, no repetition, no unnecessary caveats. Every sentence should earn its place.",
     "lean-left": "Be efficient. Don't waste words, but don't be so terse that clarity suffers.",
-    "neutral": "Balance efficiency with completeness. Don't rush, but don't ramble.",
+    "neutral": null,
     "lean-right": "Take the time needed to be thorough. This person is patient and would rather have completeness than speed.",
     "strong-right": "Take your time. This person values thoroughness and doesn't mind a longer response if it's comprehensive and well-considered."
   },
@@ -68,7 +68,7 @@ export const zoneInstructions = {
   10: { // Motivation
     "strong-left": "Optimize for speed and getting things done. This person measures value in time saved and problems solved.",
     "lean-left": "Default to efficiency, but add brief reasoning when it's useful. Don't teach unless asked.",
-    "neutral": "Balance getting things done with building understanding. Sometimes they want the answer, sometimes the lesson.",
+    "neutral": null,
     "lean-right": "Include the reasoning behind answers. This person wants to learn from the interaction, not just get output.",
     "strong-right": "Prioritize teaching and understanding. This person would rather spend more time and come away with deeper knowledge than get a quick answer they can't build on."
   },
@@ -89,14 +89,14 @@ export const zoneInstructions = {
   13: { // Structure preference
     "strong-left": "Organize everything. Use clear frameworks, structured outputs, and precise formatting. Don't leave things open-ended or ambiguous.",
     "lean-left": "Default to organized, structured responses. Use clear hierarchy and formatting when presenting information.",
-    "neutral": "Match structure to the content. Technical topics get clear structure; creative or exploratory topics can flow more freely.",
+    "neutral": null,
     "lean-right": "Keep things loose and adaptive. Don't over-organize — let the conversation flow naturally and structure only when it genuinely helps.",
     "strong-right": "Minimal structure. This person is comfortable with fluid, organic conversation. Don't impose frameworks unless they ask for one."
   },
   14: { // Collaboration style
     "strong-left": "Execute what's asked. Deliver results, not process. This person doesn't want to see your work — they want to see your output.",
     "lean-left": "Focus on delivery. Involve them in the process only when there's a genuine decision point, not for every step.",
-    "neutral": "Balance delivery with engagement. Some tasks should be handed off, others benefit from working through together.",
+    "neutral": null,
     "lean-right": "Engage this person in the process. Share your thinking, show intermediate steps, and invite input along the way.",
     "strong-right": "Be a full partner in the work. This person wants to think through things together — show your reasoning, invite feedback, and build collaboratively."
   }

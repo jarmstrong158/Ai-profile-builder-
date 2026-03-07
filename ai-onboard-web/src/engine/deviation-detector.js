@@ -50,7 +50,7 @@ export function detectDeviations(normalizedScores, primaryId, secondaryId = null
     }
   }
 
-  // Sort by deviation size descending, cap at 3
+  // Sort by deviation size descending, cap at 2 (keep About Me tight)
   deviations.sort((a, b) => b.deviation - a.deviation);
-  return deviations.slice(0, 3);
+  return deviations.slice(0, 2);
 }
