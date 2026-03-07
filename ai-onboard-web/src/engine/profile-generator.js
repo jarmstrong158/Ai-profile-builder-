@@ -112,7 +112,7 @@ function buildInstructions(answers, zones) {
   }
 
   // Layer 2: Direct instructions
-  for (const qId of ["2.5", "4.5", "5.7"]) {
+  for (const qId of ["1.1", "1.4", "1.7", "2.5", "4.3", "4.5", "5.6", "5.7", "5.10", "5.11", "7.1", "7.2", "7.3"]) {
     const answer = answers[qId];
     if (answer && directInstructions[qId][answer]) {
       instructions.push(directInstructions[qId][answer]);
@@ -168,7 +168,7 @@ export function generateProfileData(answers, normalizedScores, zones, archetypeR
   }
 
   // Layer 2
-  for (const qId of ["2.5", "4.5", "5.7"]) {
+  for (const qId of ["1.1", "1.4", "1.7", "2.5", "4.3", "4.5", "5.6", "5.7", "5.10", "5.11", "7.1", "7.2", "7.3"]) {
     const answer = answers[qId];
     if (answer && directInstructions[qId][answer]) {
       instructionList.push(directInstructions[qId][answer]);
