@@ -4,5 +4,6 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  base: '/Ai-profile-builder-/',
   build: { outDir: 'dist', sourcemap: false }
 })
