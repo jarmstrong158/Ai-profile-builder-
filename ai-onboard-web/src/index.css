@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0F1117;
+  --color-surface: #1A1D27;
+  --color-surface-hover: #242836;
+  --color-border: #2A2E3B;
+  --color-text-primary: #E8E9ED;
+  --color-text-secondary: #8B8FA3;
+  --color-accent: #3B82F6;
+  --color-accent-green: #10B981;
+  --color-accent-amber: #F59E0B;
+  --color-accent-red: #EF4444;
+  --color-accent-muted: #3B82F620;
+
+  --font-body: 'DM Sans', sans-serif;
+  --font-heading: 'Sora', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-bg: #F8F9FC;
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #F1F3F9;
+  --color-border: #E2E5EF;
+  --color-text-primary: #1A1D27;
+  --color-text-secondary: #6B7084;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background-color: var(--color-accent);
+  color: white;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
