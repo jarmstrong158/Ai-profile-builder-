@@ -36,7 +36,7 @@ export function assembleWorkContext(answers) {
     const hasOnlyNotSure = tools.length === 1 && tools[0] === 9;
 
     if (hasOnlyPhone) {
-      parts.push("They primarily use their phone and basic apps.");
+      parts.push("I primarily use my phone and basic apps.");
     } else if (hasOnlyNotSure) {
       // omit
     } else {
@@ -65,10 +65,10 @@ export function assembleWorkContext(answers) {
 
     if (hasOption6) {
       // Option 6 supersedes everything
-      parts.push("They bring a wide range of topics to AI conversations — expect anything from work tasks to personal projects to life decisions.");
+      parts.push("I bring a wide range of topics to AI conversations — expect anything from work tasks to personal projects to life decisions.");
     } else if (hasOption5 && topics.length === 1) {
       // Only option 5
-      parts.push("They keep AI conversations focused on work.");
+      parts.push("I keep AI conversations focused on work.");
     } else {
       // Specific topics (ignore option 5 if mixed with others)
       const specificTopics = topics
@@ -77,7 +77,7 @@ export function assembleWorkContext(answers) {
         .filter(Boolean);
 
       if (specificTopics.length > 0) {
-        parts.push(`Beyond work, they also use AI for ${formatList(specificTopics)}.`);
+        parts.push(`Beyond work, I also use AI for ${formatList(specificTopics)}.`);
       }
     }
   }

@@ -9,6 +9,9 @@ export default function Layout({ children }) {
       <main className="pt-12 px-4 pb-8">
         {children}
       </main>
+      <footer className="text-center py-6 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+        Built by <a href="https://github.com/jarmstrong158" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-accent)' }}>Jonny Armstrong</a>
+      </footer>
     </div>
   );
 }

@@ -7,10 +7,10 @@ import {
 } from '../dashboard-health.js';
 
 describe('getHealthBand', () => {
-  it('returns thriving for >= 75', () => expect(getHealthBand(75)).toBe(HEALTH_BAND.THRIVING));
-  it('returns on-track for >= 50', () => expect(getHealthBand(50)).toBe(HEALTH_BAND.ON_TRACK));
-  it('returns needs-attention for >= 25', () => expect(getHealthBand(25)).toBe(HEALTH_BAND.NEEDS_ATTENTION));
-  it('returns at-risk for < 25', () => expect(getHealthBand(10)).toBe(HEALTH_BAND.AT_RISK));
+  it('returns thriving for >= 70', () => expect(getHealthBand(70)).toBe(HEALTH_BAND.THRIVING));
+  it('returns on-track for >= 55', () => expect(getHealthBand(55)).toBe(HEALTH_BAND.ON_TRACK));
+  it('returns needs-attention for >= 40', () => expect(getHealthBand(40)).toBe(HEALTH_BAND.NEEDS_ATTENTION));
+  it('returns at-risk for < 40', () => expect(getHealthBand(10)).toBe(HEALTH_BAND.AT_RISK));
 });
 
 describe('computeIndividualHealth', () => {

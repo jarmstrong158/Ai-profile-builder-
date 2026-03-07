@@ -33,23 +33,29 @@ export function generateProfile(answers, zones, archetypeResult, deviations) {
   sections.push(assembleWorkContext(answers));
   sections.push("");
 
-  // How to Work With Me
-  sections.push("## How to Work With Me");
-  sections.push("");
-  const instructions = buildInstructions(answers, zones);
-  for (const instruction of instructions) {
-    sections.push(`- ${instruction}`);
-  }
-  sections.push("");
-
-  // Custom Notes (before tips so they're included in copy version)
+  // Custom Notes (moved before instructions — highest-signal user-written content)
   const customNotes = answers["6.3"];
   if (customNotes && typeof customNotes === "string" && customNotes.trim()) {
-    sections.push("## Custom Notes");
+    sections.push("## In My Own Words");
     sections.push("");
     sections.push(customNotes.trim());
     sections.push("");
   }
+
+  // How to Work With Me
+  sections.push("## How to Work With Me");
+  sections.push("");
+  const instructions = buildInstructions(answers, zones);
+  const coreInstructions = instructions.filter(i => i.core);
+  const standardInstructions = instructions.filter(i => !i.core);
+
+  for (const instruction of coreInstructions) {
+    sections.push(`- **${instruction.text}**`);
+  }
+  for (const instruction of standardInstructions) {
+    sections.push(`- ${instruction.text}`);
+  }
+  sections.push("");
 
   // Snapshot without tips for copy/download
   const markdownForCopy = sections.join("\n").trimEnd();
@@ -95,20 +101,31 @@ function buildAboutMe(archetypeResult, deviations) {
 
 /**
  * Build the How to Work With Me instruction list.
+ * Returns array of { text, core } objects.
+ * Core instructions: strong-zone spectrum instructions + section 5/7 direct instructions.
+ *
  * Priority order: Direct instructions first (most specific), then spectrum, then friction.
+ * Within each layer, core items are sorted to the top in the final output.
+ *
  * Deduplication: spectrum 8 dropped when spectrum 1 covers the same direction.
  * Deduplication: spectrum 12 dropped when Q1.4 direct instruction covers formatting.
  * Deduplication: spectrum 13 dropped when Q5.10 direct instruction covers guidance detail.
- * Null/empty zone instructions are skipped (e.g., suppressed spectrum 9).
+ * Null/empty zone instructions are skipped (e.g., suppressed spectrum 9 and neutral zones).
  */
 function buildInstructions(answers, zones) {
   const instructions = [];
+
+  // Direct instruction questions from sections 5 and 7 are "core" (explicitly about AI behavior)
+  const coreDirectQuestions = new Set(["5.6", "5.7", "5.10", "5.11", "7.1", "7.2", "7.3"]);
 
   // Layer 1: Direct instructions (highest priority — user explicitly answered about AI behavior)
   for (const qId of ["1.1", "1.4", "1.7", "2.5", "4.3", "4.5", "5.6", "5.7", "5.10", "5.11", "7.1", "7.2", "7.3"]) {
     const answer = answers[qId];
     if (answer && directInstructions[qId] && directInstructions[qId][answer]) {
-      instructions.push(directInstructions[qId][answer]);
+      instructions.push({
+        text: directInstructions[qId][answer],
+        core: coreDirectQuestions.has(qId)
+      });
     }
   }
 
@@ -139,7 +156,9 @@ function buildInstructions(answers, zones) {
     const zone = zones[i];
     const instruction = zoneInstructions[i][zone];
     if (!instruction) continue; // Skip null/suppressed instructions
-    instructions.push(instruction);
+
+    const isStrongZone = zone === "strong-left" || zone === "strong-right";
+    instructions.push({ text: instruction, core: isStrongZone });
   }
 
   // Layer 3: Friction rules (specific don'ts — deduplicated against spectrum instructions)
@@ -158,7 +177,7 @@ function buildInstructions(answers, zones) {
         }
       }
 
-      instructions.push(rule);
+      instructions.push({ text: rule, core: false });
     }
   }
 

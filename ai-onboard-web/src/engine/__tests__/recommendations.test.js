@@ -36,13 +36,13 @@ describe('generateIndividualRecommendations', () => {
     expect(recs.some(r => r.title === 'Confidence recovery support')).toBe(true);
   });
 
-  it('sorts by priority', () => {
+  it('sorts by priority descending (highest first)', () => {
     const recs = generateIndividualRecommendations({
       healthBand: HEALTH_BAND.AT_RISK,
       supplementaryAnswers: { S4: 1, S7: 4 }
     });
     for (let i = 1; i < recs.length; i++) {
-      expect(recs[i].priority).toBeGreaterThanOrEqual(recs[i - 1].priority);
+      expect(recs[i].priority).toBeLessThanOrEqual(recs[i - 1].priority);
     }
   });
 });

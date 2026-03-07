@@ -25,7 +25,8 @@ export default function QuizPage() {
         profile: profileData,
         scores: normalizedScores,
         zones,
-        archetype: archetypeResult
+        archetype: archetypeResult,
+        answers
       }
     });
   }, [navigate]);

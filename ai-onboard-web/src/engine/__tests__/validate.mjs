@@ -22,17 +22,17 @@ function assertClose(actual, expected, tolerance, msg) {
   assert(Math.abs(actual - expected) <= tolerance, `${msg}: expected ~${expected}, got ${actual}`);
 }
 
-// ── Verify theoretical ranges match Python script exactly ──
+// ── Verify theoretical ranges ──
+// Recalculated 2026-03-07 via recalculate.py after Q4.2/Q5.4 weight fixes
 console.log("=== THEORETICAL RANGE VERIFICATION ===");
 const { mins, maxs } = calculateTheoreticalRange(true);
 
-// Expected ranges from Python validation script
-const expectedMins = { 1: -28, 2: -14, 3: -12, 4: -8, 5: -11, 6: -25, 7: -16, 8: -25, 9: -4, 10: -19, 11: -12, 12: -10, 13: -11, 14: -10 };
-const expectedMaxs = { 1: 19, 2: 11, 3: 11, 4: 3, 5: 9, 6: 4, 7: 15, 8: 17, 9: 2, 10: 25, 11: 20, 12: 10, 13: 9, 14: 20 };
+const expectedMins = { 1:-28, 2:-14, 3:-12, 4:-8, 5:-10, 6:-26, 7:-13, 8:-25, 9:-4, 10:-19, 11:-12, 12:-10, 13:-11, 14:-11 };
+const expectedMaxs = { 1:19, 2:11, 3:11, 4:3, 5:9, 6:4, 7:12, 8:17, 9:2, 10:24, 11:19, 12:10, 13:9, 14:19 };
 
 for (let i = 1; i <= 14; i++) {
-  assert(mins[i] === expectedMins[i], `Min for ${SPECTRUM_NAMES[i]}: expected ${expectedMins[i]}, got ${mins[i]}`);
-  assert(maxs[i] === expectedMaxs[i], `Max for ${SPECTRUM_NAMES[i]}: expected ${expectedMaxs[i]}, got ${maxs[i]}`);
+  assert(mins[i] === expectedMins[i], `Min[${i}] ${SPECTRUM_NAMES[i]}: expected ${expectedMins[i]}, got ${mins[i]}`);
+  assert(maxs[i] === expectedMaxs[i], `Max[${i}] ${SPECTRUM_NAMES[i]}: expected ${expectedMaxs[i]}, got ${maxs[i]}`);
 }
 
 // ── Test Case 1: The Direct Builder ──
@@ -56,10 +56,9 @@ const zones1 = assignZones(norm1);
 const arch1 = matchArchetypes(norm1);
 const devs1 = detectDeviations(norm1, arch1.primary, arch1.secondary);
 
-// Verify exact normalized scores (cross-checked with Python)
-const expected1 = { 1: 23.4, 2: 8, 3: 56.5, 4: 36.4, 5: 5, 6: 58.6, 7: 12.9, 8: 23.8, 9: 33.3, 10: 29.5, 11: 62.5, 12: 40, 13: 35, 14: 36.7 };
+const expectedNorm1 = { 1:23.4, 2:8.0, 3:56.5, 4:36.4, 5:5.3, 6:60.0, 7:16.0, 8:21.4, 9:33.3, 10:27.9, 11:64.5, 12:40.0, 13:35.0, 14:36.7 };
 for (let i = 1; i <= 14; i++) {
-  assertClose(norm1[i], expected1[i], 0.2, `TC1 ${SPECTRUM_NAMES[i]}`);
+  assertClose(norm1[i], expectedNorm1[i], 0.1, `TC1 norm[${i}] ${SPECTRUM_NAMES[i]}`);
 }
 assert(arch1.primary === "operator", `TC1 Primary: expected operator, got ${arch1.primary}`);
 console.log(`  Primary: ${arch1.primaryName}, Secondary: ${arch1.secondaryName}`);

@@ -44,10 +44,17 @@ export default function SharedProfilePage() {
     }
 
     // Spectrum instructions only (no direct or friction — those need answers)
+    // Filter out null/suppressed zone instructions, tag with core flag
     const instructions = [];
     for (let i = 1; i <= 14; i++) {
-      instructions.push(zoneInstructions[i][zones[i]]);
+      const text = zoneInstructions[i][zones[i]];
+      if (!text) continue;
+      const isStrongZone = zones[i] === 'strong-left' || zones[i] === 'strong-right';
+      instructions.push({ text, core: isStrongZone });
     }
+
+    // Sort: core first, then standard
+    const sorted = [...instructions.filter(i => i.core), ...instructions.filter(i => !i.core)];
 
     // Build markdown (copy version excludes tips)
     const coreMdLines = [
@@ -59,7 +66,7 @@ export default function SharedProfilePage() {
       ...aboutMeParts.map(p => p + '\n'),
       '## How to Work With Me',
       '',
-      ...instructions.map(i => `- ${i}`)
+      ...sorted.map(i => i.core ? `- **${i.text}**` : `- ${i.text}`)
     ];
 
     const fullMdLines = [
@@ -74,7 +81,7 @@ export default function SharedProfilePage() {
       profile: {
         aboutMe: aboutMeParts,
         workContext: 'Work context is not available in shared profiles. Take the quiz to generate your full profile.',
-        instructions,
+        instructions: sorted,
         tips: gettingBetterResultsTips,
         customNotes: null,
         archetype: {

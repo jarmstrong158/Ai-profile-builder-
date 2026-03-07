@@ -3,7 +3,7 @@ export default function ArchetypeCard({ archetype }) {
 
   return (
     <div
-      className="rounded-lg p-6 border"
+      className="rounded p-6 border"
       style={{
         backgroundColor: 'var(--color-surface)',
         borderColor: 'var(--color-border)'

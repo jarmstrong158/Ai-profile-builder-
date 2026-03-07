@@ -1,6 +1,14 @@
 /**
  * Attention flags system.
  * Identifies individuals and team-level patterns that need manager attention.
+ *
+ * Spec-defined individual flags:
+ * - "Has not completed first assessment" (invited but no quiz taken — 7+ days)
+ * - "Overdue for retake" (past recommended retake date by 7+ days)
+ * - "Declining confidence" (S5 = "less confident" for 2+ consecutive retakes)
+ * - "Low success rate" (S3 = "rarely" or "hit or miss" for 2+ consecutive retakes)
+ * - "Negative time impact" (S6 = "cost me time" on most recent retake)
+ * - "Not using AI" (S1 = "once or not at all" for 2+ consecutive retakes)
  */
 
 import { VOLATILITY_STATUS } from './retake.js';
@@ -18,11 +26,21 @@ export const FLAG_SEVERITY = {
 /**
  * Generate attention flags for an individual team member.
  * @param {Object} member - { supplementaryAnswers, volatilityStatus, healthScore, healthBand,
- *   spectrumSpikes, daysSinceAssessment, normalizedScores }
+ *   spectrumSpikes, daysSinceAssessment, daysSinceInvite, hasCompletedAssessment,
+ *   previousSupplementaryAnswers, consecutiveRetakes }
  * @returns {Array<Object>} Flags sorted by severity
  */
 export function generateIndividualFlags(member) {
   const flags = [];
+
+  // Flag: Has not completed first assessment (invited 7+ days ago, no quiz taken)
+  if (member.hasCompletedAssessment === false && member.daysSinceInvite != null && member.daysSinceInvite >= 7) {
+    flags.push({
+      type: 'not_completed',
+      severity: FLAG_SEVERITY.HIGH,
+      message: 'Has not completed first assessment'
+    });
+  }
 
   // Flag: Health score at-risk
   if (member.healthBand === HEALTH_BAND.AT_RISK) {
@@ -54,7 +72,7 @@ export function generateIndividualFlags(member) {
     }
   }
 
-  // Flag: Overdue retake
+  // Flag: Overdue retake (past recommended retake date by 7+ days)
   if (member.daysSinceAssessment != null && member.daysSinceAssessment > 30) {
     flags.push({
       type: 'overdue_retake',
@@ -63,25 +81,38 @@ export function generateIndividualFlags(member) {
     });
   }
 
-  // Flag: Low confidence trajectory (S5 = 3, "less confident")
-  if (member.supplementaryAnswers?.['S5'] === 3) {
+  // Flag: Declining confidence (S5 = 3 "less confident" for 2+ consecutive retakes)
+  if (member.consecutiveRetakes?.confidenceDeclines >= 2) {
     flags.push({
       type: 'confidence_declining',
       severity: FLAG_SEVERITY.HIGH,
+      message: 'Reports declining confidence with AI tools for 2+ consecutive assessments'
+    });
+  } else if (member.supplementaryAnswers?.['S5'] === 3) {
+    // Single instance — still flag but lower severity
+    flags.push({
+      type: 'confidence_declining',
+      severity: FLAG_SEVERITY.MEDIUM,
       message: 'Reports declining confidence with AI tools'
     });
   }
 
-  // Flag: Not using AI (S1 = 4, "once or not at all")
-  if (member.supplementaryAnswers?.['S1'] === 4) {
+  // Flag: Low success rate (S3 = 3 or 4 for 2+ consecutive retakes)
+  if (member.consecutiveRetakes?.lowSuccess >= 2) {
     flags.push({
-      type: 'low_adoption',
+      type: 'low_success_rate',
+      severity: FLAG_SEVERITY.HIGH,
+      message: 'Reports low success rate with AI for 2+ consecutive assessments'
+    });
+  } else if (member.supplementaryAnswers?.['S3'] === 4) {
+    flags.push({
+      type: 'low_success_rate',
       severity: FLAG_SEVERITY.MEDIUM,
-      message: 'Rarely or never using AI tools'
+      message: 'Reports rarely getting usable results from AI'
     });
   }
 
-  // Flag: AI costing time (S6 = 4, "it actually cost me time")
+  // Flag: Negative time impact (S6 = 4 "cost me time" on most recent retake)
   if (member.supplementaryAnswers?.['S6'] === 4) {
     flags.push({
       type: 'negative_time_impact',
@@ -90,12 +121,18 @@ export function generateIndividualFlags(member) {
     });
   }
 
-  // Flag: Low success rate (S3 = 4, "rarely useful")
-  if (member.supplementaryAnswers?.['S3'] === 4) {
+  // Flag: Not using AI (S1 = 4 "once or not at all" for 2+ consecutive retakes)
+  if (member.consecutiveRetakes?.lowAdoption >= 2) {
     flags.push({
-      type: 'low_success_rate',
+      type: 'low_adoption',
+      severity: FLAG_SEVERITY.HIGH,
+      message: 'Rarely or never using AI tools for 2+ consecutive assessments'
+    });
+  } else if (member.supplementaryAnswers?.['S1'] === 4) {
+    flags.push({
+      type: 'low_adoption',
       severity: FLAG_SEVERITY.MEDIUM,
-      message: 'Reports rarely getting usable results from AI'
+      message: 'Rarely or never using AI tools'
     });
   }
 

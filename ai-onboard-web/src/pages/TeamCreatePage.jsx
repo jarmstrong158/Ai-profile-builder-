@@ -1,0 +1,87 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Layout from '../components/common/Layout.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
+import { createTeam } from '../lib/teams.js';
+
+export default function TeamCreatePage() {
+  const [name, setName] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+
+    setError('');
+    setLoading(true);
+
+    try {
+      const team = await createTeam(name.trim(), user.id);
+      navigate('/dashboard', { state: { newTeamId: team.id } });
+    } catch (err) {
+      setError(err.message || 'Failed to create team');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Layout>
+      <div className="min-h-[calc(100vh-48px)] flex items-center justify-center">
+        <div className="w-full max-w-[400px] px-4">
+          <h1
+            className="text-2xl font-semibold mb-2 text-center"
+            style={{ fontFamily: 'var(--font-heading)', color: 'var(--color-text-primary)' }}
+          >
+            Create a Team
+          </h1>
+          <p className="text-sm mb-6 text-center" style={{ color: 'var(--color-text-secondary)' }}>
+            Once created, you'll get an invite link to share with your team members.
+          </p>
+
+          {error && (
+            <div
+              className="mb-4 px-4 py-3 rounded text-sm"
+              style={{ backgroundColor: 'rgba(220, 38, 38, 0.1)', color: '#dc2626' }}
+            >
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div>
+              <label className="block text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>
+                Team Name
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                className="w-full px-3 py-2 rounded text-sm"
+                style={{
+                  backgroundColor: 'var(--color-surface)',
+                  color: 'var(--color-text-primary)',
+                  border: '1px solid var(--color-border)'
+                }}
+                placeholder="e.g. Marketing Team"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-2 rounded text-sm font-medium cursor-pointer transition-opacity"
+              style={{ backgroundColor: 'var(--color-accent)', color: 'white', opacity: loading ? 0.6 : 1 }}
+            >
+              {loading ? 'Creating...' : 'Create Team'}
+            </button>
+          </form>
+        </div>
+      </div>
+    </Layout>
+  );
+}

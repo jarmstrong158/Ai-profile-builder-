@@ -11,9 +11,11 @@ export default function ProgressBar() {
   });
 
   const currentDisplayIdx = displaySections.findIndex(s => s.id === sections[state.currentSection]?.id);
+  const totalQuestions = displaySections.reduce((sum, s) => sum + s.questions.length, 0);
+  const answeredQuestions = displaySections.reduce((sum, s) => sum + s.questions.filter(q => state.answers[q.id] !== undefined).length, 0);
 
   return (
-    <div className="w-full mb-8">
+    <div className="w-full mb-8" role="progressbar" aria-valuenow={answeredQuestions} aria-valuemin={0} aria-valuemax={totalQuestions} aria-label="Quiz progress">
       <div className="flex gap-[2px] h-1">
         {displaySections.map((section, idx) => {
           const isCurrent = idx === currentDisplayIdx;

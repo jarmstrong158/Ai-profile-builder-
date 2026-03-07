@@ -5,6 +5,13 @@ import SpectrumChart from './SpectrumChart.jsx';
 export default function ProfileView({ profile, scores, zones, archetype, onRetake, onShare, isSharedView }) {
   if (!profile) return null;
 
+  // Normalize instructions to { text, core } objects (handles both old string[] and new object[] formats)
+  const instructions = (profile.instructions || []).map(i =>
+    typeof i === 'string' ? { text: i, core: false } : i
+  );
+  const coreInstructions = instructions.filter(i => i.core);
+  const standardInstructions = instructions.filter(i => !i.core);
+
   return (
     <div className="w-full max-w-[720px] mx-auto pb-24 px-4 sm:px-0">
       {/* Header */}
@@ -47,39 +54,51 @@ export default function ProfileView({ profile, scores, zones, archetype, onRetak
         </p>
       </ProfileSection>
 
-      {/* How to Work With Me */}
-      <ProfileSection title="How to Work With Me">
-        <div className="flex flex-col gap-3">
-          {profile.instructions.map((instruction, idx) => (
-            <div
-              key={idx}
-              className="pl-4 py-1 text-[14px] sm:text-[15px] leading-relaxed"
-              style={{
-                borderLeft: '2px solid var(--color-accent)',
-                color: 'var(--color-text-primary)'
-              }}
-            >
-              {instruction}
-            </div>
-          ))}
-        </div>
-      </ProfileSection>
-
-      {/* Custom Notes */}
+      {/* Custom Notes (before instructions — highest-signal user-written content) */}
       {profile.customNotes && (
-        <ProfileSection title="Custom Notes">
+        <ProfileSection title="In My Own Words">
           <div
             className="px-4 py-3 rounded text-[14px] sm:text-[15px] leading-relaxed italic"
             style={{
               backgroundColor: 'var(--color-surface)',
               color: 'var(--color-text-primary)',
-              borderLeft: '2px solid var(--color-border)'
+              borderLeft: '2px solid var(--color-accent)'
             }}
           >
             {profile.customNotes}
           </div>
         </ProfileSection>
       )}
+
+      {/* How to Work With Me */}
+      <ProfileSection title="How to Work With Me">
+        <div className="flex flex-col gap-3">
+          {coreInstructions.map((instruction, idx) => (
+            <div
+              key={`core-${idx}`}
+              className="pl-4 py-1 text-[14px] sm:text-[15px] leading-relaxed font-medium"
+              style={{
+                borderLeft: '3px solid var(--color-accent)',
+                color: 'var(--color-text-primary)'
+              }}
+            >
+              {instruction.text}
+            </div>
+          ))}
+          {standardInstructions.map((instruction, idx) => (
+            <div
+              key={`std-${idx}`}
+              className="pl-4 py-1 text-[14px] sm:text-[15px] leading-relaxed"
+              style={{
+                borderLeft: '2px solid var(--color-border)',
+                color: 'var(--color-text-primary)'
+              }}
+            >
+              {instruction.text}
+            </div>
+          ))}
+        </div>
+      </ProfileSection>
 
       {/* Getting Better Results (visible but excluded from copy) */}
       <ProfileSection title="Getting Better Results">
