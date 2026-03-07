@@ -98,6 +98,7 @@ function buildAboutMe(archetypeResult, deviations) {
  * Priority order: Direct instructions first (most specific), then spectrum, then friction.
  * Deduplication: spectrum 8 dropped when spectrum 1 covers the same direction.
  * Deduplication: spectrum 12 dropped when Q1.4 direct instruction covers formatting.
+ * Deduplication: spectrum 13 dropped when Q5.10 direct instruction covers guidance detail.
  * Null/empty zone instructions are skipped (e.g., suppressed spectrum 9).
  */
 function buildInstructions(answers, zones) {
@@ -126,11 +127,14 @@ function buildInstructions(answers, zones) {
 
   // Dedup: skip spectrum 12 (structure) when Q1.4 direct instruction already covers formatting
   const skipSpec12 = answers["1.4"] && directInstructions["1.4"] && directInstructions["1.4"][answers["1.4"]];
+  // Dedup: skip spectrum 13 (detail orientation) when Q5.10 direct instruction already covers guidance detail
+  const skipSpec13 = answers["5.10"] && directInstructions["5.10"] && directInstructions["5.10"][answers["5.10"]];
 
   for (let i = 1; i <= 14; i++) {
     if (i === 8 && skipSpec8) continue;
     if (i === 10 && skipSpec10) continue;
     if (i === 12 && skipSpec12) continue;
+    if (i === 13 && skipSpec13) continue;
 
     const zone = zones[i];
     const instruction = zoneInstructions[i][zone];
