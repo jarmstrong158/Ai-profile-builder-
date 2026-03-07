@@ -95,31 +95,50 @@ function buildAboutMe(archetypeResult, deviations) {
 
 /**
  * Build the How to Work With Me instruction list.
- * Layer 1: Spectrum instructions (14)
- * Layer 2: Direct instructions from Q2.5, Q4.5, Q5.7 (3)
- * Layer 3: Friction rules from Q6.1 (0-10, deduplicated against Layer 1)
+ * Priority order: Direct instructions first (most specific), then spectrum, then friction.
+ * Deduplication: spectrum 8 dropped when spectrum 1 covers the same direction.
+ * Deduplication: spectrum 12 dropped when Q1.4 direct instruction covers formatting.
+ * Null/empty zone instructions are skipped (e.g., suppressed spectrum 9).
  */
 function buildInstructions(answers, zones) {
   const instructions = [];
 
-  // Layer 1: Spectrum-based instructions
-  for (let i = 1; i <= 14; i++) {
-    const zone = zones[i];
-    const instruction = zoneInstructions[i][zone];
-    if (instruction) {
-      instructions.push(instruction);
-    }
-  }
-
-  // Layer 2: Direct instructions
-  for (const qId of ["2.5", "4.5", "5.7"]) {
+  // Layer 1: Direct instructions (highest priority — user explicitly answered about AI behavior)
+  for (const qId of ["1.1", "1.4", "1.7", "2.5", "4.3", "4.5", "5.6", "5.7", "5.10", "5.11", "7.1", "7.2", "7.3"]) {
     const answer = answers[qId];
-    if (answer && directInstructions[qId][answer]) {
+    if (answer && directInstructions[qId] && directInstructions[qId][answer]) {
       instructions.push(directInstructions[qId][answer]);
     }
   }
 
-  // Layer 3: Friction rules (deduplicated)
+  // Layer 2: Spectrum-based instructions (general style patterns)
+  // Dedup: skip spectrum 8 (patience) when spectrum 1 (density) covers the same direction
+  const spec1Zone = zones[1];
+  const spec8Zone = zones[8];
+  const spec10Zone = zones[10];
+  const bothConcise18 = ["strong-left", "lean-left"].includes(spec1Zone) && ["strong-left", "lean-left"].includes(spec8Zone);
+  const bothThorough18 = ["strong-right", "lean-right"].includes(spec1Zone) && ["strong-right", "lean-right"].includes(spec8Zone);
+  const skipSpec8 = bothConcise18 || bothThorough18;
+  // Dedup: skip spectrum 10 (motivation) when spectrum 1 (density) covers the same direction
+  const bothEfficient = ["strong-left", "lean-left"].includes(spec1Zone) && ["strong-left", "lean-left"].includes(spec10Zone);
+  const bothDeep = ["strong-right", "lean-right"].includes(spec1Zone) && ["strong-right", "lean-right"].includes(spec10Zone);
+  const skipSpec10 = bothEfficient || bothDeep;
+
+  // Dedup: skip spectrum 12 (structure) when Q1.4 direct instruction already covers formatting
+  const skipSpec12 = answers["1.4"] && directInstructions["1.4"] && directInstructions["1.4"][answers["1.4"]];
+
+  for (let i = 1; i <= 14; i++) {
+    if (i === 8 && skipSpec8) continue;
+    if (i === 10 && skipSpec10) continue;
+    if (i === 12 && skipSpec12) continue;
+
+    const zone = zones[i];
+    const instruction = zoneInstructions[i][zone];
+    if (!instruction) continue; // Skip null/suppressed instructions
+    instructions.push(instruction);
+  }
+
+  // Layer 3: Friction rules (specific don'ts — deduplicated against spectrum instructions)
   const selectedFriction = answers["6.1"];
   if (selectedFriction && Array.isArray(selectedFriction)) {
     for (const opt of selectedFriction) {
@@ -159,33 +178,8 @@ export function generateProfileData(answers, normalizedScores, zones, archetypeR
     aboutMeParts.push(dev.sentence);
   }
 
-  // Build instructions
-  const instructionList = [];
-
-  // Layer 1
-  for (let i = 1; i <= 14; i++) {
-    instructionList.push(zoneInstructions[i][zones[i]]);
-  }
-
-  // Layer 2
-  for (const qId of ["2.5", "4.5", "5.7"]) {
-    const answer = answers[qId];
-    if (answer && directInstructions[qId][answer]) {
-      instructionList.push(directInstructions[qId][answer]);
-    }
-  }
-
-  // Layer 3
-  const selectedFriction = answers["6.1"];
-  if (selectedFriction && Array.isArray(selectedFriction)) {
-    for (const opt of selectedFriction) {
-      const rule = frictionRules[opt];
-      if (!rule) continue;
-      const dedup = frictionDedup[opt];
-      if (dedup && dedup.dropIfZones.includes(zones[dedup.spectrum])) continue;
-      instructionList.push(rule);
-    }
-  }
+  // Build instructions using the same logic as buildInstructions
+  const instructionList = buildInstructions(answers, zones);
 
   const customNotes = answers["6.3"];
 
