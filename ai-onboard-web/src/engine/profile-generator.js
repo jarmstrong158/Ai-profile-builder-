@@ -97,6 +97,7 @@ function buildAboutMe(archetypeResult, deviations) {
  * Build the How to Work With Me instruction list.
  * Priority order: Direct instructions first (most specific), then spectrum, then friction.
  * Deduplication: spectrum 8 dropped when spectrum 1 covers the same direction.
+ * Deduplication: spectrum 12 dropped when Q1.4 direct instruction covers formatting.
  * Null/empty zone instructions are skipped (e.g., suppressed spectrum 9).
  */
 function buildInstructions(answers, zones) {
@@ -123,9 +124,13 @@ function buildInstructions(answers, zones) {
   const bothDeep = ["strong-right", "lean-right"].includes(spec1Zone) && ["strong-right", "lean-right"].includes(spec10Zone);
   const skipSpec10 = bothEfficient || bothDeep;
 
+  // Dedup: skip spectrum 12 (structure) when Q1.4 direct instruction already covers formatting
+  const skipSpec12 = answers["1.4"] && directInstructions["1.4"] && directInstructions["1.4"][answers["1.4"]];
+
   for (let i = 1; i <= 14; i++) {
     if (i === 8 && skipSpec8) continue;
     if (i === 10 && skipSpec10) continue;
+    if (i === 12 && skipSpec12) continue;
 
     const zone = zones[i];
     const instruction = zoneInstructions[i][zone];

@@ -6,8 +6,9 @@ import { SPECTRUM_NAMES } from '../data/weights.js';
  * Detect deviations between user scores and primary archetype ideal.
  * Default threshold: >25 points deviation.
  * Exception: Motivation (spectrum 10) uses >=17 threshold.
+ * Suppressed: Spectrum 9 (energy) excluded — signal too weak to generate useful deviations.
  * Filters out spectrums covered by secondary archetype bridging.
- * Returns max 3 deviations, sorted by deviation size descending.
+ * Returns max 2 deviations, sorted by deviation size descending.
  */
 export function detectDeviations(normalizedScores, primaryId, secondaryId = null) {
   const primaryIdeal = archetypes[primaryId].ideal;
@@ -31,8 +32,10 @@ export function detectDeviations(normalizedScores, primaryId, secondaryId = null
   }
 
   // Find deviations
+  const SUPPRESSED_SPECTRUMS = new Set([9]); // Energy: signal too weak
   const deviations = [];
   for (let i = 1; i <= 14; i++) {
+    if (SUPPRESSED_SPECTRUMS.has(i)) continue;
     if (coveredSpectrums.has(i)) continue;
 
     const deviation = Math.abs(normalizedScores[i] - primaryIdeal[i]);
