@@ -34,7 +34,7 @@ export default function LandingPage() {
       </div>
 
       {/* How it works */}
-      <div className="max-w-[640px] mx-auto pb-24 px-4">
+      <div className="max-w-[640px] mx-auto pb-24 px-4 text-center">
         <div className="flex flex-col gap-16">
           <InfoSection
             title="You answer. We score."
