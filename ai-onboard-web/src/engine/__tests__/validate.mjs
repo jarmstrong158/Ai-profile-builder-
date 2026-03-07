@@ -27,8 +27,8 @@ console.log("=== THEORETICAL RANGE VERIFICATION ===");
 const { mins, maxs } = calculateTheoreticalRange(true);
 
 // Expected ranges from Python validation script
-const expectedMins = { 1: -28, 2: -14, 3: -12, 4: -8, 5: -11, 6: -25, 7: -13, 8: -25, 9: -4, 10: -19, 11: -12, 12: -10, 13: -11, 14: -10 };
-const expectedMaxs = { 1: 19, 2: 11, 3: 11, 4: 3, 5: 9, 6: 4, 7: 12, 8: 17, 9: 2, 10: 25, 11: 20, 12: 10, 13: 9, 14: 20 };
+const expectedMins = { 1: -28, 2: -14, 3: -12, 4: -8, 5: -11, 6: -25, 7: -16, 8: -25, 9: -4, 10: -19, 11: -12, 12: -10, 13: -11, 14: -10 };
+const expectedMaxs = { 1: 19, 2: 11, 3: 11, 4: 3, 5: 9, 6: 4, 7: 15, 8: 17, 9: 2, 10: 25, 11: 20, 12: 10, 13: 9, 14: 20 };
 
 for (let i = 1; i <= 14; i++) {
   assert(mins[i] === expectedMins[i], `Min for ${SPECTRUM_NAMES[i]}: expected ${expectedMins[i]}, got ${mins[i]}`);
@@ -57,7 +57,7 @@ const arch1 = matchArchetypes(norm1);
 const devs1 = detectDeviations(norm1, arch1.primary, arch1.secondary);
 
 // Verify exact normalized scores (cross-checked with Python)
-const expected1 = { 1: 23.4, 2: 8, 3: 56.5, 4: 36.4, 5: 5, 6: 58.6, 7: 16, 8: 23.8, 9: 33.3, 10: 29.5, 11: 62.5, 12: 40, 13: 35, 14: 36.7 };
+const expected1 = { 1: 23.4, 2: 8, 3: 56.5, 4: 36.4, 5: 5, 6: 58.6, 7: 12.9, 8: 23.8, 9: 33.3, 10: 29.5, 11: 62.5, 12: 40, 13: 35, 14: 36.7 };
 for (let i = 1; i <= 14; i++) {
   assertClose(norm1[i], expected1[i], 0.2, `TC1 ${SPECTRUM_NAMES[i]}`);
 }

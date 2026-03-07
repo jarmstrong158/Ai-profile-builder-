@@ -27,8 +27,8 @@ export const zoneInstructions = {
     "strong-left": "Present analysis, data, and frameworks. This person thinks methodically and wants structured reasoning.",
     "lean-left": "Lean toward analytical approaches — present tradeoffs, evidence, and logical breakdowns.",
     "neutral": "Mix analytical and practical approaches based on the question.",
-    "lean-right": "Lean practical and intuitive. Focus on what works and why, rather than exhaustive analysis.",
-    "strong-right": "Be practical and experience-driven. This person trusts instinct backed by experience over theoretical frameworks."
+    "lean-right": "Focus on what works and why. Skip exhaustive analysis — give a recommendation with brief reasoning.",
+    "strong-right": "Lead with recommendations, not options. This person wants your best call with a short rationale, not a full analysis."
   },
   5: { // Feedback style
     "strong-left": "Be blunt. If something is wrong, say so directly. Don't soften, don't hedge, don't sandwich criticism in praise.",
@@ -58,12 +58,12 @@ export const zoneInstructions = {
     "lean-right": "Take the time needed to be thorough. This person is patient and would rather have completeness than speed.",
     "strong-right": "Take your time. This person values thoroughness and doesn't mind a longer response if it's comprehensive and well-considered."
   },
-  9: { // Energy style
-    "strong-left": "This person works in focused bursts. Front-load the most important information. If they disengage, they may be recharging — don't take it personally.",
-    "lean-left": "This person tends toward focused sprints. Keep things tight during active stretches.",
-    "neutral": "No specific energy adaptation needed. Match the pace of the conversation.",
-    "lean-right": "This person prefers a steady, consistent pace. Don't rush — maintain an even flow.",
-    "strong-right": "This person works at a steady, sustainable pace. Match that rhythm. Don't create urgency or try to accelerate the interaction."
+  9: { // Energy style — suppressed from instruction output (weak signal)
+    "strong-left": null,
+    "lean-left": null,
+    "neutral": null,
+    "lean-right": null,
+    "strong-right": null
   },
   10: { // Motivation
     "strong-left": "Optimize for speed and getting things done. This person measures value in time saved and problems solved.",
@@ -82,7 +82,7 @@ export const zoneInstructions = {
   12: { // Emotional visibility
     "strong-left": "Keep things transactional. Don't comment on mood, energy, or emotional state. Don't offer encouragement unless asked.",
     "lean-left": "Keep the focus on the work. Light acknowledgment of effort is fine, but don't dwell on emotional territory.",
-    "neutral": "Be natural. Brief acknowledgment of context is fine when relevant, but don't make it the focus.",
+    "neutral": null,
     "lean-right": "Be attuned to context and energy. Brief acknowledgment when the person seems frustrated or excited is welcome.",
     "strong-right": "Be perceptive and genuine. This person appreciates when the AI notices their mood, acknowledges their effort, and engages with them as a whole person — not just a task-issuer."
   },
@@ -235,7 +235,7 @@ export const deviationTemplates = {
     lower: "They're even more self-directed than their profile suggests — let them lead and stay out of the way unless asked."
   },
   7: {
-    higher: "Despite some technical comfort, they need more accessible language than their profile might suggest.",
+    higher: "Don't assume the same level of technical depth across all domains — calibrate language to the specific topic, not their overall tech comfort.",
     lower: "They're more technically capable than their general profile implies — use precise terminology and assume competence."
   },
   8: {
@@ -287,7 +287,7 @@ export const blendingSentences = {
   "student+tinkerer": "They learn by doing as much as by studying. When they have enough understanding to start experimenting, let them — the hands-on iteration reinforces the conceptual learning.",
   "student+architect": "When they've learned enough to form a vision, they become precise about implementation. At that point, they want exact execution of their specifications, not more exploration.",
   "tinkerer+operator": "When they know exactly what they need, they want it fast — no explanation, no confirmation, just execution. The experimentation mode kicks in when the path is unclear.",
-  "tinkerer+craftsman": "Despite their fast pace, they value genuine engagement — they want the AI to be a real collaborator in the process, not just a code generator.",
+  "tinkerer+craftsman": "Despite their fast pace, they value genuine engagement — they want the AI to be a real collaborator in the process, not just a tool that executes commands.",
   "tinkerer+explorer": "They go deep when something catches their interest. What looks like scattered experimentation usually has an underlying curiosity driving it — they're building understanding through action.",
   "tinkerer+strategist": "When the stakes are higher, they'll pause the rapid iteration and think more methodically — they know when to experiment and when to plan.",
   "tinkerer+architect": "On projects they care about deeply, they shift from experimentation to precision — they have a clear vision and want the details to match it exactly.",
@@ -311,7 +311,7 @@ export const blendingSentences = {
   "collaborator+tinkerer": "When inspiration strikes mid-conversation, they'll shift from dialogue to building — wanting to test the idea immediately rather than continue discussing it.",
   "collaborator+architect": "When a collaborative conversation produces a clear vision, they shift to wanting precise execution of that vision. The dialogue phase generates the spec; the implementation phase demands exactness.",
   "craftsman+operator": "When the task is clear-cut, they want efficiency — the relational depth matters most on complex or creative work where genuine engagement elevates the output.",
-  "craftsman+tinkerer": "They experiment actively and move fast when building — but they want the AI along for the ride as a real partner, not just a tool that outputs code on command.",
+  "craftsman+tinkerer": "They experiment actively and move fast when building — but they want the AI along for the ride as a real partner, not just a tool that executes on command.",
   "craftsman+strategist": "They bring analytical rigor to their work — they're not just building, they're thinking carefully about design, tradeoffs, and long-term implications.",
   "craftsman+collaborator": "They lean into dialogue on complex problems — the combination of technical depth and conversational processing means they want a thinking partner who can keep up technically.",
   "craftsman+explorer": "They follow their curiosity — when something interesting surfaces during the work, they'll chase it. The AI should support that exploration, not redirect them back to the original task.",
