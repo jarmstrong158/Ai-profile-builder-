@@ -57,23 +57,52 @@ export default function AdoptionMetrics({ adoptionSummary }) {
         </div>
       )}
 
-      {/* Top Barrier */}
-      {barriers.topBarrier && (
-        <div>
-          <p className="text-xs font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
-            Top Barrier
-          </p>
+      {/* Barriers */}
+      <div>
+        <p className="text-xs font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
+          Barriers
+        </p>
+
+        {/* Positive: no barrier */}
+        {barriers.noBarrierPercentage > 0 && (
+          <div
+            className="px-4 py-3 rounded text-sm mb-2"
+            style={{ backgroundColor: '#22c55e10', borderLeft: '3px solid #22c55e' }}
+          >
+            <p className="font-medium" style={{ color: 'var(--color-text-primary)' }}>
+              {barriers.noBarrierPercentage}% report no barriers
+            </p>
+            <p className="text-xs mt-1" style={{ color: 'var(--color-text-secondary)' }}>
+              {barriers.noBarrierPercentage >= 60
+                ? 'Most of your team feels AI is working well for them. Focus on maintaining this momentum.'
+                : barriers.noBarrierPercentage >= 30
+                  ? 'A good portion of the team is barrier-free, but others are hitting obstacles — see below.'
+                  : 'Only a small portion of the team feels barrier-free. The obstacles below need attention.'}
+            </p>
+          </div>
+        )}
+
+        {/* Top real barrier */}
+        {barriers.topBarrier && (
           <div
             className="px-4 py-3 rounded text-sm"
-            style={{ backgroundColor: 'var(--color-surface)', borderLeft: '3px solid var(--color-accent)' }}
+            style={{ backgroundColor: 'var(--color-surface)', borderLeft: '3px solid #f59e0b' }}
           >
-            <p style={{ color: 'var(--color-text-primary)' }}>{barriers.topBarrier.text}</p>
+            <p className="font-medium" style={{ color: 'var(--color-text-primary)' }}>
+              Top obstacle: {barriers.topBarrier.text}
+            </p>
             <p className="text-xs mt-1" style={{ color: 'var(--color-text-secondary)' }}>
               Reported by {barriers.topBarrier.percentage}% of team
             </p>
           </div>
-        </div>
-      )}
+        )}
+
+        {!barriers.topBarrier && barriers.noBarrierPercentage === 0 && (
+          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+            No barrier data yet. Members need to complete the supplementary questions.
+          </p>
+        )}
+      </div>
 
       {/* Knowledge Sharing */}
       <div>

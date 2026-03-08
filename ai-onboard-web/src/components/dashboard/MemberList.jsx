@@ -42,7 +42,7 @@ export default function MemberList({ members, memberFlags, onSelectMember }) {
               {/* Health indicator dot */}
               <div
                 className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                style={{ backgroundColor: BAND_COLORS[member.healthBand] || BAND_COLORS['at-risk'] }}
+                style={{ backgroundColor: flags.some(f => f.type === 'untapped_potential') ? '#8b5cf6' : (BAND_COLORS[member.healthBand] || BAND_COLORS['at-risk']) }}
               />
               <div>
                 <span className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
@@ -57,20 +57,38 @@ export default function MemberList({ members, memberFlags, onSelectMember }) {
             </div>
 
             <div className="flex items-center gap-2">
-              {highFlags > 0 && (
+              {flags.some(f => f.type === 'untapped_potential') ? (
+                <span
+                  className="text-xs px-2 py-0.5 rounded-full font-medium"
+                  style={{ backgroundColor: '#8b5cf620', color: '#8b5cf6' }}
+                >
+                  Untapped
+                </span>
+              ) : highFlags > 0 ? (
                 <span
                   className="text-xs px-2 py-0.5 rounded-full font-medium"
                   style={{ backgroundColor: SEVERITY_COLORS.high + '20', color: SEVERITY_COLORS.high }}
                 >
                   {highFlags} alert{highFlags > 1 ? 's' : ''}
                 </span>
-              )}
+              ) : null}
               {!member.hasCompletedAssessment && (
                 <span
                   className="text-xs px-2 py-0.5 rounded-full"
                   style={{ backgroundColor: 'var(--color-border)', color: 'var(--color-text-secondary)' }}
                 >
                   Pending
+                </span>
+              )}
+              {member.hasCompletedAssessment && member.nextRetakeDate && new Date(member.nextRetakeDate) < new Date() && (
+                <span
+                  className="text-xs px-2 py-0.5 rounded-full font-medium"
+                  style={{
+                    backgroundColor: (new Date() - new Date(member.nextRetakeDate)) > 14 * 86400000 ? '#ef444420' : '#f59e0b20',
+                    color: (new Date() - new Date(member.nextRetakeDate)) > 14 * 86400000 ? '#ef4444' : '#f59e0b'
+                  }}
+                >
+                  {(new Date() - new Date(member.nextRetakeDate)) > 14 * 86400000 ? 'Retake Overdue' : 'Retake Due'}
                 </span>
               )}
             </div>

@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/common/Layout.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { getMyTeams, getTeam } from '../lib/teams.js';
 import { loadDashboardData } from '../lib/dashboard.js';
+import { getTeamActions } from '../lib/actions.js';
 import TeamOverview from '../components/dashboard/TeamOverview.jsx';
 import MemberList from '../components/dashboard/MemberList.jsx';
 import MemberDetail from '../components/dashboard/MemberDetail.jsx';
@@ -13,6 +14,7 @@ import AttentionFlags from '../components/dashboard/AttentionFlags.jsx';
 import Recommendations from '../components/dashboard/Recommendations.jsx';
 import TeamPatterns from '../components/dashboard/TeamPatterns.jsx';
 import InvitePanel from '../components/dashboard/InvitePanel.jsx';
+import CompositionPriorities from '../components/dashboard/CompositionPriorities.jsx';
 
 const TABS = [
   { id: 'overview', label: 'Overview' },
@@ -80,6 +82,17 @@ export default function DashboardPage() {
       });
   }, [selectedTeam]);
 
+  // Refresh just the actions (lightweight, no full dashboard reload)
+  const refreshActions = useCallback(async () => {
+    if (!selectedTeam || !dashboardData) return;
+    try {
+      const freshActions = await getTeamActions(selectedTeam);
+      setDashboardData(prev => ({ ...prev, actions: freshActions }));
+    } catch (err) {
+      console.error('Failed to refresh actions:', err);
+    }
+  }, [selectedTeam, dashboardData]);
+
   if (loading) {
     return (
       <Layout>
@@ -118,6 +131,33 @@ export default function DashboardPage() {
   }
 
   const isManager = teams.find(t => t.id === selectedTeam)?.role === 'manager';
+
+  if (!isManager) {
+    return (
+      <Layout>
+        <div className="min-h-[calc(100vh-48px)] flex items-center justify-center">
+          <div className="text-center max-w-md px-4">
+            <h1
+              className="text-2xl font-semibold mb-4"
+              style={{ fontFamily: 'var(--font-heading)', color: 'var(--color-text-primary)' }}
+            >
+              Manager Access Required
+            </h1>
+            <p className="mb-6" style={{ color: 'var(--color-text-secondary)' }}>
+              The team dashboard is only available to team managers. If you believe you should have access, contact your team manager.
+            </p>
+            <button
+              onClick={() => navigate('/')}
+              className="px-6 py-2 rounded text-sm font-medium cursor-pointer"
+              style={{ backgroundColor: 'var(--color-accent)', color: 'white' }}
+            >
+              Go Home
+            </button>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -165,6 +205,23 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {/* Preview mode banner — when team has very few members */}
+        {dashboardData?.members?.length <= 1 && (
+          <div
+            className="mb-6 px-5 py-4 rounded-lg"
+            style={{ backgroundColor: '#3b82f610', border: '1px solid #3b82f630' }}
+          >
+            <p className="text-sm font-medium" style={{ color: '#3b82f6' }}>
+              Preview Mode
+            </p>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
+              {dashboardData.members.length === 0
+                ? 'No members yet. Share your invite link to start building your team.'
+                : 'This is a preview with just your data. Share the invite link below to build your team — the dashboard gets richer with more members.'}
+            </p>
+          </div>
+        )}
+
         {/* Invite panel (managers only) */}
         {isManager && teamInfo?.invite_code && (
           <div className="mb-6">
@@ -192,16 +249,17 @@ export default function DashboardPage() {
         ) : (
           <>
             {/* Tab Navigation */}
-            <div className="flex gap-1 mb-6 overflow-x-auto" style={{ borderBottom: '1px solid var(--color-border)' }}>
+            <div className="flex gap-1 mb-6 overflow-x-auto rounded-lg p-1" style={{ backgroundColor: 'var(--color-surface)' }}>
               {TABS.map(tab => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className="px-4 py-2 text-sm cursor-pointer whitespace-nowrap transition-colors"
+                  className="flex-1 px-3 py-2 text-sm cursor-pointer whitespace-nowrap rounded-md transition-all"
                   style={{
-                    color: activeTab === tab.id ? 'var(--color-accent)' : 'var(--color-text-secondary)',
-                    borderBottom: activeTab === tab.id ? '2px solid var(--color-accent)' : '2px solid transparent',
-                    fontWeight: activeTab === tab.id ? '600' : '400'
+                    color: activeTab === tab.id ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
+                    backgroundColor: activeTab === tab.id ? 'var(--color-accent)' : 'transparent',
+                    fontWeight: activeTab === tab.id ? '600' : '400',
+                    ...(activeTab === tab.id ? { color: 'white' } : {})
                   }}
                 >
                   {tab.label}
@@ -225,6 +283,12 @@ export default function DashboardPage() {
 
               {activeTab === 'composition' && dashboardData && (
                 <div className="flex flex-col gap-8">
+                  <CompositionPriorities
+                    archetypeDistribution={dashboardData.archetypeDistribution}
+                    teamPatterns={dashboardData.teamPatterns}
+                    members={dashboardData.members}
+                    spectrumDiversity={dashboardData.spectrumDiversity}
+                  />
                   <TeamComposition
                     archetypeDistribution={dashboardData.archetypeDistribution}
                     spectrumDiversity={dashboardData.spectrumDiversity}
@@ -254,7 +318,14 @@ export default function DashboardPage() {
               )}
 
               {activeTab === 'recommendations' && dashboardData && (
-                <Recommendations recommendations={dashboardData.teamRecommendations} />
+                <Recommendations
+                  recommendations={dashboardData.teamRecommendations}
+                  members={dashboardData.members}
+                  pairingSuggestions={dashboardData.pairingSuggestions}
+                  actions={dashboardData.actions}
+                  teamId={selectedTeam}
+                  onActionsChange={refreshActions}
+                />
               )}
             </div>
           </>

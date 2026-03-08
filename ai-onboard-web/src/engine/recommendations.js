@@ -101,25 +101,47 @@ export function generateIndividualRecommendations(member) {
     }
   }
 
-  // Based on health band
+  // Based on health band + prior experience context
+  const priorExp = member.supplementaryAnswers?.['S0'];
+  const hasPersonalExperience = priorExp === 1 || priorExp === 2;
+
   if (member.healthBand === HEALTH_BAND.AT_RISK) {
-    recs.push({
-      category: RECOMMENDATION_CATEGORY.SUPPORT,
-      priority: computePriority(100, 80, 40),
-      title: 'Direct check-in needed',
-      description: 'This person\'s health indicators suggest they may be disengaged or struggling. A direct conversation about their AI experience could help.'
-    });
+    if (hasPersonalExperience) {
+      recs.push({
+        category: RECOMMENDATION_CATEGORY.SUPPORT,
+        priority: computePriority(100, 80, 75),
+        title: 'Bridge personal AI skills to work',
+        description: 'This person already uses AI outside work — they don\'t need basic training. Help them apply existing skills to work tasks with role-specific prompts and context.'
+      });
+    } else {
+      recs.push({
+        category: RECOMMENDATION_CATEGORY.SUPPORT,
+        priority: computePriority(100, 80, 40),
+        title: 'Direct check-in needed',
+        description: 'This person\'s health indicators suggest they may be disengaged or struggling. A direct conversation about their AI experience could help.'
+      });
+    }
   }
 
-  // Based on knowledge sharing (S7)
+  // Based on knowledge sharing (S7) + prior experience
   const sharing = member.supplementaryAnswers?.['S7'];
   if (sharing === 4) { // Learning solo
-    recs.push({
-      category: RECOMMENDATION_CATEGORY.CULTURE,
-      priority: computePriority(100, 40, 75),
-      title: 'Connect with peers',
-      description: 'This person is learning AI tools alone. Connecting them with an active team member could accelerate their progress.'
-    });
+    if (priorExp === 1) {
+      // Regular personal user learning alone at work → potential champion
+      recs.push({
+        category: RECOMMENDATION_CATEGORY.CULTURE,
+        priority: computePriority(100, 60, 75),
+        title: 'Leverage as AI champion',
+        description: 'This person has strong personal AI experience but isn\'t sharing at work. They could mentor teammates — consider pairing them with less experienced members.'
+      });
+    } else {
+      recs.push({
+        category: RECOMMENDATION_CATEGORY.CULTURE,
+        priority: computePriority(100, 40, 75),
+        title: 'Connect with peers',
+        description: 'This person is learning AI tools alone. Connecting them with an active team member could accelerate their progress.'
+      });
+    }
   }
 
   // Based on confidence trajectory (S5)

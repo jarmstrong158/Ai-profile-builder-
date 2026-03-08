@@ -20,6 +20,13 @@ export default function Layout({ children }) {
           {user ? (
             <>
               <button
+                onClick={() => navigate('/profile')}
+                className="text-sm cursor-pointer bg-transparent border-none"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
+                Home
+              </button>
+              <button
                 onClick={() => navigate('/dashboard')}
                 className="text-sm cursor-pointer bg-transparent border-none"
                 style={{ color: 'var(--color-accent)' }}

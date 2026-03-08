@@ -42,12 +42,33 @@ export function generateIndividualFlags(member) {
     });
   }
 
-  // Flag: Health score at-risk
+  // Flag: Health score at-risk — differentiate untapped potential from truly at-risk
   if (member.healthBand === HEALTH_BAND.AT_RISK) {
+    const priorExp = member.supplementaryAnswers?.['S0'];
+    if (priorExp === 1 || priorExp === 2) {
+      // Has personal AI experience but low work adoption → untapped potential
+      flags.push({
+        type: 'untapped_potential',
+        severity: FLAG_SEVERITY.MEDIUM,
+        message: priorExp === 1
+          ? 'Uses AI regularly outside work — untapped potential for work adoption'
+          : 'Has some personal AI experience — could bridge to work use with support'
+      });
+    } else {
+      flags.push({
+        type: 'health_at_risk',
+        severity: FLAG_SEVERITY.HIGH,
+        message: 'Health score is at-risk — may need direct support or check-in'
+      });
+    }
+  }
+
+  // Flag: Needs-attention + regular personal AI user → also untapped potential
+  if (member.healthBand === HEALTH_BAND.NEEDS_ATTENTION && member.supplementaryAnswers?.['S0'] === 1) {
     flags.push({
-      type: 'health_at_risk',
-      severity: FLAG_SEVERITY.HIGH,
-      message: 'Health score is at-risk — may need direct support or check-in'
+      type: 'untapped_potential',
+      severity: FLAG_SEVERITY.LOW,
+      message: 'Uses AI regularly outside work — could perform better with work-specific support'
     });
   }
 

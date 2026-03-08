@@ -6,6 +6,17 @@
 
 export const supplementaryQuestions = [
   {
+    id: "S0",
+    text: "Before we start — how much have you used AI tools outside of work (personal projects, home use, curiosity)?",
+    type: "single",
+    metric: "prior_experience",
+    options: [
+      { value: 1, text: "Regularly — I use AI tools in my personal life" },
+      { value: 2, text: "Occasionally — I've played around with it" },
+      { value: 3, text: "Not really — this is mostly new to me" }
+    ]
+  },
+  {
     id: "S1",
     text: "In the last two weeks, how often did you use AI tools for work?",
     type: "single",

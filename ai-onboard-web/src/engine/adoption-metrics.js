@@ -103,9 +103,16 @@ export function aggregateBarriers(members) {
     }))
     .sort((a, b) => b.count - a.count);
 
+  // Separate "no barrier" (value 6) from real barriers
+  const noBarrier = sorted.find(b => b.value === 6);
+  const realBarriers = sorted.filter(b => b.value !== 6 && b.count > 0);
+  const topRealBarrier = realBarriers.length > 0 ? realBarriers[0] : null;
+
   return {
     barriers: sorted,
-    topBarrier: sorted[0]?.count > 0 ? sorted[0] : null,
+    topBarrier: topRealBarrier,
+    noBarrierCount: noBarrier?.count || 0,
+    noBarrierPercentage: noBarrier?.percentage || 0,
     respondents: total
   };
 }

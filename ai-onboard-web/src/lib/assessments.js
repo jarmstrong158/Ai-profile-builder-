@@ -55,6 +55,23 @@ export async function getLatestAssessment(userId, teamId) {
 }
 
 /**
+ * Get the latest assessment for a user (any team).
+ * Used by ProfilePage to reload a saved profile.
+ */
+export async function getMyLatestAssessment(userId) {
+  const { data, error } = await supabase
+    .from('assessments')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
+
+  if (error && error.code !== 'PGRST116') throw error;
+  return data || null;
+}
+
+/**
  * Get full assessment history for a user in a team (for volatility calculation).
  */
 export async function getAssessmentHistory(userId, teamId) {

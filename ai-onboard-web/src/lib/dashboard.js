@@ -6,12 +6,14 @@
 
 import { getTeamMembers } from './teams.js';
 import { getTeamAssessments } from './assessments.js';
+import { getTeamActions } from './actions.js';
 import { computeTeamHealth, computeIndividualHealth } from '../engine/dashboard-health.js';
 import { computeAdoptionSummary } from '../engine/adoption-metrics.js';
 import { generateIndividualFlags, generateTeamFlags } from '../engine/attention-flags.js';
 import { generateTeamRecommendations, generateIndividualRecommendations } from '../engine/recommendations.js';
 import { analyzeArchetypeDistribution, analyzeSpectrumDiversity, identifyTeamPatterns } from '../engine/team-composition.js';
 import { detectSpectrumSpikes, determineVolatilityStatus, getNextRetakeDate } from '../engine/retake.js';
+import { generatePairingSuggestions } from '../engine/pairing.js';
 
 /**
  * Load and compute all dashboard data for a team.
@@ -20,9 +22,10 @@ import { detectSpectrumSpikes, determineVolatilityStatus, getNextRetakeDate } fr
  */
 export async function loadDashboardData(teamId) {
   // Fetch raw data from Supabase
-  const [members, assessments] = await Promise.all([
+  const [members, assessments, actions] = await Promise.all([
     getTeamMembers(teamId),
-    getTeamAssessments(teamId)
+    getTeamAssessments(teamId),
+    getTeamActions(teamId).catch(() => [])
   ]);
 
   // Group assessments by user (newest first — already sorted by getTeamAssessments)
@@ -129,6 +132,9 @@ export async function loadDashboardData(teamId) {
     }
   }
 
+  // Pairing suggestions
+  const pairingSuggestions = generatePairingSuggestions(enrichedMembers);
+
   return {
     members: enrichedMembers,
     memberFlags,
@@ -139,7 +145,9 @@ export async function loadDashboardData(teamId) {
     spectrumDiversity,
     teamPatterns,
     teamRecommendations,
-    individualRecommendations
+    individualRecommendations,
+    pairingSuggestions,
+    actions
   };
 }
 

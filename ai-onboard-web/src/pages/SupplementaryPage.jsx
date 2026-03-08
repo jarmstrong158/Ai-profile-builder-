@@ -11,7 +11,7 @@ export default function SupplementaryPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const { coreAnswers, normalizedScores, zones, archetypeResult, teamId } = location.state || {};
+  const { coreAnswers, normalizedScores, zones, archetypeResult, teamId, profile } = location.state || {};
 
   const [answers, setAnswers] = useState({});
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -94,7 +94,18 @@ export default function SupplementaryPage() {
         zones,
         archetypeResult
       });
-      navigate('/dashboard', { replace: true });
+      // Redirect to profile page with data so user can see their results
+      navigate('/profile', {
+        replace: true,
+        state: {
+          profile,
+          scores: normalizedScores,
+          zones,
+          archetype: archetypeResult,
+          answers: coreAnswers,
+          savedToTeam: true
+        }
+      });
     } catch (err) {
       setError(err.message || 'Failed to save assessment');
       setSaving(false);
@@ -200,7 +211,7 @@ export default function SupplementaryPage() {
                   cursor: (!canProceed || saving) ? 'default' : 'pointer'
                 }}
               >
-                {saving ? 'Saving...' : isLast ? 'Save & View Dashboard' : 'Next'}
+                {saving ? 'Saving...' : isLast ? 'Save & View Profile' : 'Next'}
               </button>
             )}
           </div>
