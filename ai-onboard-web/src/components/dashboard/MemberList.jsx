@@ -11,7 +11,7 @@ const SEVERITY_COLORS = {
   'low': '#3b82f6'
 };
 
-export default function MemberList({ members, memberFlags, onSelectMember }) {
+export default function MemberList({ members, memberFlags, onSelectMember, onScheduleTest, schedulingTest }) {
   if (!members || members.length === 0) {
     return (
       <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
@@ -27,9 +27,12 @@ export default function MemberList({ members, memberFlags, onSelectMember }) {
         const highFlags = flags.filter(f => f.severity === 'high').length;
 
         return (
-          <button
+          <div
             key={member.userId}
+            role="button"
+            tabIndex={0}
             onClick={() => onSelectMember(member, flags)}
+            onKeyDown={e => { if (e.key === 'Enter') onSelectMember(member, flags); }}
             className="flex items-center justify-between px-4 py-3 rounded text-left cursor-pointer transition-colors"
             style={{
               backgroundColor: 'var(--color-surface)',
@@ -99,8 +102,23 @@ export default function MemberList({ members, memberFlags, onSelectMember }) {
                   Stabilized
                 </span>
               )}
+              {onScheduleTest && member.hasCompletedAssessment && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); onScheduleTest(member); }}
+                  disabled={schedulingTest}
+                  className="text-xs px-2.5 py-1 rounded cursor-pointer"
+                  style={{
+                    backgroundColor: 'var(--color-accent)',
+                    color: 'white',
+                    border: 'none',
+                    opacity: schedulingTest ? 0.5 : 1
+                  }}
+                >
+                  {schedulingTest ? '...' : 'Schedule Test'}
+                </button>
+              )}
             </div>
-          </button>
+          </div>
         );
       })}
     </div>

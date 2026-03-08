@@ -76,6 +76,19 @@ export async function getMyActions(userId) {
 }
 
 /**
+ * Acknowledge an action (member has seen and is working on it).
+ * @param {string} actionId
+ */
+export async function acknowledgeAction(actionId) {
+  const { error } = await supabase
+    .from('actions')
+    .update({ acknowledged_at: new Date().toISOString() })
+    .eq('id', actionId);
+
+  if (error) throw error;
+}
+
+/**
  * Update action status (active → completed or dismissed).
  * @param {string} actionId
  * @param {string} status - 'completed' or 'dismissed'

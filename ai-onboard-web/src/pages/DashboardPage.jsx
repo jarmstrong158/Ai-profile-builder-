@@ -301,6 +301,8 @@ export default function DashboardPage() {
                   members={dashboardData.members}
                   memberFlags={dashboardData.memberFlags}
                   onSelectMember={(member, flags) => setSelectedMember({ member, flags })}
+                  onScheduleTest={handleScheduleTest}
+                  schedulingTest={schedulingTest}
                 />
               )}
 
@@ -348,6 +350,7 @@ export default function DashboardPage() {
                   actions={dashboardData.actions}
                   teamId={selectedTeam}
                   onActionsChange={refreshActions}
+                  onScheduleTest={handleScheduleTest}
                 />
               )}
             </div>

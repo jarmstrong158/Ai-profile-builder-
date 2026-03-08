@@ -5,7 +5,7 @@ import SpectrumChart from '../components/profile/SpectrumChart.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { getMyTeams } from '../lib/teams.js';
 import { getMyLatestAssessment, getAssessmentHistory } from '../lib/assessments.js';
-import { getMyActions, updateActionStatus } from '../lib/actions.js';
+import { getMyActions, updateActionStatus, acknowledgeAction } from '../lib/actions.js';
 import { getMyPendingRetakes } from '../lib/scheduled-retakes.js';
 import { getNextRetakeDate, VOLATILITY_STATUS } from '../engine/retake.js';
 import { matchArchetypes } from '../engine/archetype-matching.js';
@@ -39,6 +39,8 @@ export default function MyDashboardPage() {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [aiCopied, setAiCopied] = useState(false);
+  const [actionBusy, setActionBusy] = useState(null); // actionId currently processing
+  const [actionSuccess, setActionSuccess] = useState(null); // { id, type } for success feedback
 
   useEffect(() => {
     if (authLoading) return;
@@ -117,13 +119,33 @@ export default function MyDashboardPage() {
   const autoNextDate = getNextRetakeDate(volatility, assessment.created_at);
   const isAutoOverdue = !nextScheduled && autoNextDate && new Date(autoNextDate) <= new Date();
 
-  const handleMarkComplete = async (actionId) => {
+  const handleAcknowledge = async (actionId) => {
+    setActionBusy(actionId);
     try {
-      await updateActionStatus(actionId, 'completed');
-      setActions(prev => prev.filter(a => a.id !== actionId));
+      await acknowledgeAction(actionId);
+      setActions(prev => prev.map(a => a.id === actionId ? { ...a, acknowledged_at: new Date().toISOString() } : a));
+      setActionSuccess({ id: actionId, type: 'acknowledged' });
+      setTimeout(() => setActionSuccess(null), 3000);
     } catch (err) {
-      console.error('Failed to update action:', err);
+      console.error('Failed to acknowledge action:', err);
     }
+    setActionBusy(null);
+  };
+
+  const handleSubmitForReview = async (actionId) => {
+    setActionBusy(actionId);
+    try {
+      await updateActionStatus(actionId, 'pending_review');
+      setActionSuccess({ id: actionId, type: 'submitted' });
+      // Keep showing for a moment before removing
+      setTimeout(() => {
+        setActions(prev => prev.filter(a => a.id !== actionId));
+        setActionSuccess(null);
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to submit for review:', err);
+    }
+    setActionBusy(null);
   };
 
   const handleCopyAIContext = () => {
@@ -305,13 +327,55 @@ export default function MyDashboardPage() {
                       {action.message_to_partner}
                     </p>
                   )}
-                  <button
-                    onClick={() => handleMarkComplete(action.id)}
-                    className="text-xs px-3 py-1.5 rounded cursor-pointer"
-                    style={{ backgroundColor: '#22c55e20', color: '#22c55e', border: 'none' }}
-                  >
-                    Mark Complete
-                  </button>
+                  {/* Success banner */}
+                  {actionSuccess?.id === action.id && (
+                    <div
+                      className="mb-3 px-3 py-2 rounded text-xs font-medium"
+                      style={{
+                        backgroundColor: actionSuccess.type === 'submitted' ? '#22c55e20' : '#3b82f620',
+                        color: actionSuccess.type === 'submitted' ? '#22c55e' : '#3b82f6'
+                      }}
+                    >
+                      {actionSuccess.type === 'submitted'
+                        ? 'Submitted for review — your manager will be notified.'
+                        : 'Acknowledged — your manager can see you\'re working on this.'}
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-2">
+                    {!action.acknowledged_at ? (
+                      <button
+                        onClick={() => handleAcknowledge(action.id)}
+                        disabled={actionBusy === action.id}
+                        className="text-xs px-3 py-1.5 rounded cursor-pointer transition-opacity"
+                        style={{
+                          backgroundColor: '#3b82f620',
+                          color: '#3b82f6',
+                          border: 'none',
+                          opacity: actionBusy === action.id ? 0.5 : 1
+                        }}
+                      >
+                        {actionBusy === action.id ? 'Sending...' : 'Acknowledge'}
+                      </button>
+                    ) : (
+                      <span className="text-xs px-3 py-1.5 rounded flex items-center gap-1" style={{ backgroundColor: '#3b82f610', color: '#3b82f6' }}>
+                        &#10003; Acknowledged
+                      </span>
+                    )}
+                    <button
+                      onClick={() => handleSubmitForReview(action.id)}
+                      disabled={actionBusy === action.id}
+                      className="text-xs px-3 py-1.5 rounded cursor-pointer transition-opacity"
+                      style={{
+                        backgroundColor: '#22c55e20',
+                        color: '#22c55e',
+                        border: 'none',
+                        opacity: actionBusy === action.id ? 0.5 : 1
+                      }}
+                    >
+                      {actionBusy === action.id ? 'Submitting...' : 'Task Complete, Submit for Review'}
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
