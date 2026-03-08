@@ -91,6 +91,14 @@ export default function MemberList({ members, memberFlags, onSelectMember }) {
                   {(new Date() - new Date(member.nextRetakeDate)) > 14 * 86400000 ? 'Retake Overdue' : 'Retake Due'}
                 </span>
               )}
+              {member.volatilityStatus === 'stable' && (
+                <span
+                  className="text-xs px-2 py-0.5 rounded-full font-medium"
+                  style={{ backgroundColor: '#22c55e20', color: '#22c55e' }}
+                >
+                  Stabilized
+                </span>
+              )}
             </div>
           </button>
         );

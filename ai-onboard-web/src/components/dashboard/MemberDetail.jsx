@@ -162,7 +162,7 @@ const PRIOR_EXP_TEXT = {
   3: 'New to AI'
 };
 
-export default function MemberDetail({ member, flags, recommendations, onBack }) {
+export default function MemberDetail({ member, flags, recommendations, onBack, onScheduleTest, schedulingTest }) {
   if (!member) return null;
 
   const [aiContextCopied, setAiContextCopied] = useState(false);
@@ -237,6 +237,36 @@ export default function MemberDetail({ member, flags, recommendations, onBack })
           )}
         </div>
       </div>
+
+      {/* Schedule Test button */}
+      {onScheduleTest && (
+        <div
+          className="flex items-center justify-between px-4 py-3 rounded-lg"
+          style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
+        >
+          <div>
+            <p className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
+              Schedule Retake
+            </p>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
+              Request {member.displayName} to retake the assessment. They'll be notified on their dashboard.
+            </p>
+          </div>
+          <button
+            onClick={() => onScheduleTest(member)}
+            disabled={schedulingTest}
+            className="px-3 py-1.5 rounded text-xs font-medium cursor-pointer flex-shrink-0 ml-4"
+            style={{
+              backgroundColor: '#3b82f6',
+              color: 'white',
+              border: 'none',
+              opacity: schedulingTest ? 0.6 : 1
+            }}
+          >
+            {schedulingTest ? 'Scheduling...' : 'Schedule Test'}
+          </button>
+        </div>
+      )}
 
       {/* Untapped Potential callout — shown instead of standard narrative when applicable */}
       {isUntappedPotential ? (

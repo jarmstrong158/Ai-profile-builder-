@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { supplementaryQuestions } from '../data/supplementary-questions.js';
 import { validateTeamAnswers } from '../engine/team-quiz.js';
 import { saveAssessment } from '../lib/assessments.js';
+import { autoScheduleNextRetake } from '../lib/scheduled-retakes.js';
 
 export default function SupplementaryPage() {
   const location = useLocation();
@@ -94,6 +95,15 @@ export default function SupplementaryPage() {
         zones,
         archetypeResult
       });
+
+      // Auto-schedule the first retake (14 days for new users)
+      await autoScheduleNextRetake({
+        teamId,
+        userId: user.id,
+        volatilityStatus: 'new',
+        assessmentDate: new Date().toISOString()
+      }).catch(() => {}); // Don't block on scheduling failure
+
       // Redirect to profile page with data so user can see their results
       navigate('/profile', {
         replace: true,

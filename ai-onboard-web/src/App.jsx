@@ -11,6 +11,7 @@ import JoinPage from './pages/JoinPage.jsx';
 import SupplementaryPage from './pages/SupplementaryPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import RetakePage from './pages/RetakePage.jsx';
+import MyDashboardPage from './pages/MyDashboardPage.jsx';
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
           <Route path="/teams/new" element={<ProtectedRoute><TeamCreatePage /></ProtectedRoute>} />
           <Route path="/supplementary" element={<ProtectedRoute><SupplementaryPage /></ProtectedRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          <Route path="/my-dashboard" element={<ProtectedRoute><MyDashboardPage /></ProtectedRoute>} />
           <Route path="/retake" element={<ProtectedRoute><RetakePage /></ProtectedRoute>} />
         </Routes>
       </HashRouter>

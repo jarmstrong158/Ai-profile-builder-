@@ -15,6 +15,7 @@ import Recommendations from '../components/dashboard/Recommendations.jsx';
 import TeamPatterns from '../components/dashboard/TeamPatterns.jsx';
 import InvitePanel from '../components/dashboard/InvitePanel.jsx';
 import CompositionPriorities from '../components/dashboard/CompositionPriorities.jsx';
+import { scheduleRetake } from '../lib/scheduled-retakes.js';
 
 const TABS = [
   { id: 'overview', label: 'Overview' },
@@ -37,6 +38,7 @@ export default function DashboardPage() {
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedMember, setSelectedMember] = useState(null);
+  const [schedulingTest, setSchedulingTest] = useState(false);
 
   // Load teams
   useEffect(() => {
@@ -92,6 +94,25 @@ export default function DashboardPage() {
       console.error('Failed to refresh actions:', err);
     }
   }, [selectedTeam, dashboardData]);
+
+  const handleScheduleTest = useCallback(async (member) => {
+    if (!selectedTeam || !user) return;
+    setSchedulingTest(true);
+    try {
+      await scheduleRetake({
+        teamId: selectedTeam,
+        userId: member.userId,
+        scheduledBy: user.id,
+        scheduleType: 'manager',
+        scheduledFor: new Date().toISOString() // Due immediately
+      });
+      alert(`Retake scheduled for ${member.displayName}. They'll see it on their dashboard.`);
+    } catch (err) {
+      console.error('Failed to schedule test:', err);
+      alert('Failed to schedule test: ' + err.message);
+    }
+    setSchedulingTest(false);
+  }, [selectedTeam, user]);
 
   if (loading) {
     return (
@@ -245,6 +266,8 @@ export default function DashboardPage() {
             flags={selectedMember.flags}
             recommendations={dashboardData?.individualRecommendations?.[selectedMember.member.userId]}
             onBack={() => setSelectedMember(null)}
+            onScheduleTest={handleScheduleTest}
+            schedulingTest={schedulingTest}
           />
         ) : (
           <>

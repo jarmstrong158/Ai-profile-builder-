@@ -20,18 +20,18 @@ export default function Layout({ children }) {
           {user ? (
             <>
               <button
-                onClick={() => navigate('/profile')}
+                onClick={() => navigate('/my-dashboard')}
                 className="text-sm cursor-pointer bg-transparent border-none"
                 style={{ color: 'var(--color-text-secondary)' }}
               >
-                Home
+                My Dashboard
               </button>
               <button
                 onClick={() => navigate('/dashboard')}
                 className="text-sm cursor-pointer bg-transparent border-none"
                 style={{ color: 'var(--color-accent)' }}
               >
-                Dashboard
+                Team
               </button>
               <button
                 onClick={() => signOut()}

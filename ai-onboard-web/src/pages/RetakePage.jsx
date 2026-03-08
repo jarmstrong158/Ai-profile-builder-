@@ -10,12 +10,15 @@ import { calculateRawScores, normalizeScores, assignZones } from '../engine/scor
 import { matchArchetypes } from '../engine/archetype-matching.js';
 import { determineVolatilityStatus, detectSpectrumSpikes } from '../engine/retake.js';
 import { SPECTRUM_NAMES } from '../engine/team-composition.js';
+import { completeScheduledRetake, autoScheduleNextRetake, getDueRetake } from '../lib/scheduled-retakes.js';
 
 export default function RetakePage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const teamId = location.state?.teamId;
+  const practiceMode = location.state?.practiceMode || false;
+  const scheduledRetakeId = location.state?.scheduledRetakeId || null;
 
   const [phase, setPhase] = useState('quiz'); // quiz | supplementary | saving
   const [coreAnswers, setCoreAnswers] = useState(null);
@@ -25,6 +28,8 @@ export default function RetakePage() {
   const [suppAnswers, setSuppAnswers] = useState({});
   const [suppIdx, setSuppIdx] = useState(0);
   const [error, setError] = useState('');
+  const [willSave, setWillSave] = useState(!practiceMode); // determined after checking schedule
+  const [practiceComplete, setPracticeComplete] = useState(false);
 
   if (!teamId) {
     return (
@@ -84,6 +89,41 @@ export default function RetakePage() {
     try {
       // Get assessment history for volatility
       const history = await getAssessmentHistory(user.id, teamId);
+      const isFirstAssessment = history.length === 0;
+
+      // Determine if we should save:
+      // - First assessment: ALWAYS save
+      // - Has a scheduled retake that's due: save
+      // - Practice mode with no schedule: don't save
+      let shouldSave = isFirstAssessment;
+      let retakeToComplete = scheduledRetakeId;
+
+      if (!isFirstAssessment && !scheduledRetakeId) {
+        // Check if there's a due retake we didn't get the ID for
+        const dueRetake = await getDueRetake(user.id, teamId).catch(() => null);
+        if (dueRetake) {
+          shouldSave = true;
+          retakeToComplete = dueRetake.id;
+        }
+      } else if (scheduledRetakeId) {
+        shouldSave = true;
+      }
+
+      if (!shouldSave && practiceMode) {
+        // Practice mode — don't save, show results
+        setPracticeComplete(true);
+        setPhase('practice-done');
+        return;
+      }
+
+      // If no scheduled retake and not first assessment, still check if auto-schedule is due
+      if (!shouldSave && !isFirstAssessment) {
+        // Unscheduled retake — show practice results
+        setPracticeComplete(true);
+        setPhase('practice-done');
+        return;
+      }
+
       const volatilityStatus = determineVolatilityStatus(history, normalizedScores);
 
       await saveAssessment({
@@ -97,7 +137,20 @@ export default function RetakePage() {
         volatilityStatus
       });
 
-      navigate('/dashboard', { replace: true });
+      // Mark the scheduled retake as completed
+      if (retakeToComplete) {
+        await completeScheduledRetake(retakeToComplete).catch(() => {});
+      }
+
+      // Auto-schedule the next retake
+      await autoScheduleNextRetake({
+        teamId,
+        userId: user.id,
+        volatilityStatus,
+        assessmentDate: new Date().toISOString()
+      }).catch(() => {});
+
+      navigate('/my-dashboard', { replace: true });
     } catch (err) {
       setError(err.message || 'Failed to save');
       setPhase('supplementary');
@@ -123,6 +176,44 @@ export default function RetakePage() {
       <Layout>
         <div className="min-h-[calc(100vh-48px)] flex items-center justify-center">
           <p style={{ color: 'var(--color-text-secondary)' }}>Saving your retake...</p>
+        </div>
+      </Layout>
+    );
+  }
+
+  // Practice complete — scores not saved
+  if (phase === 'practice-done') {
+    return (
+      <Layout>
+        <div className="min-h-[calc(100vh-48px)] flex items-center justify-center">
+          <div className="w-full max-w-[440px] px-4 text-center">
+            <div
+              className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center text-xl"
+              style={{ backgroundColor: '#3b82f620', color: '#3b82f6' }}
+            >
+              &#9998;
+            </div>
+            <h1
+              className="text-xl font-semibold mb-2"
+              style={{ fontFamily: 'var(--font-heading)', color: 'var(--color-text-primary)' }}
+            >
+              Practice Complete
+            </h1>
+            <p className="text-sm mb-2" style={{ color: 'var(--color-text-secondary)' }}>
+              This was a practice retake — your scores were <strong>not</strong> updated.
+            </p>
+            <p className="text-xs mb-6" style={{ color: 'var(--color-text-secondary)' }}>
+              Scores only update during scheduled retakes (set automatically or by your manager).
+              Your next scheduled retake will appear on your dashboard when it's due.
+            </p>
+            <button
+              onClick={() => navigate('/my-dashboard', { replace: true })}
+              className="px-6 py-2.5 rounded text-sm font-medium cursor-pointer"
+              style={{ backgroundColor: 'var(--color-accent)', color: 'white' }}
+            >
+              Back to Dashboard
+            </button>
+          </div>
         </div>
       </Layout>
     );
