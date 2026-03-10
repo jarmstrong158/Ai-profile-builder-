@@ -63,7 +63,7 @@ const CATEGORY_NEXT_STEPS = {
   }
 };
 
-export default function Recommendations({ recommendations, teamHealth, members, pairingSuggestions, actions, teamId, onActionsChange, onScheduleTest }) {
+export default function Recommendations({ recommendations, teamHealth, members, pairingSuggestions, actions, teamId, onActionsChange, onScheduleTest, onApproveRetake }) {
   const { user } = useAuth();
   const [assigning, setAssigning] = useState(false);
   const [updating, setUpdating] = useState(false);
@@ -127,6 +127,7 @@ export default function Recommendations({ recommendations, teamHealth, members, 
             members={members}
             onUpdateStatus={handleUpdateStatus}
             onScheduleTest={onScheduleTest}
+            onApproveRetake={onApproveRetake}
             updating={updating}
           />
         </div>

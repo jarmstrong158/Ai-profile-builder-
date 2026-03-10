@@ -77,7 +77,7 @@ export async function getMyLatestAssessment(userId) {
 export async function getAssessmentHistory(userId, teamId) {
   const { data, error } = await supabase
     .from('assessments')
-    .select('normalized_scores, volatility_status, created_at')
+    .select('normalized_scores, volatility_status, created_at, archetype_result')
     .eq('user_id', userId)
     .eq('team_id', teamId)
     .order('created_at', { ascending: false });
@@ -87,6 +87,7 @@ export async function getAssessmentHistory(userId, teamId) {
   return (data || []).map(row => ({
     normalizedScores: row.normalized_scores,
     volatilityStatus: row.volatility_status,
-    date: new Date(row.created_at)
+    date: new Date(row.created_at),
+    archetypeResult: row.archetype_result
   }));
 }

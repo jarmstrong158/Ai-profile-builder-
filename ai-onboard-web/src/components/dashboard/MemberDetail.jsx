@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import SpectrumChart from '../profile/SpectrumChart.jsx';
+import ProfileTimeline from '../profile/ProfileTimeline.jsx';
 import { calculateSpectrumShifts } from '../../engine/retake.js';
 import { SPECTRUM_NAMES } from '../../engine/team-composition.js';
 import { generateAIContext } from '../../engine/ai-context.js';
@@ -373,7 +374,7 @@ export default function MemberDetail({ member, flags, recommendations, onBack, o
       {/* Spectrum Chart */}
       {member.normalizedScores && member.zones && (
         <DashboardSection title="Spectrum Profile">
-          <SpectrumChart scores={member.normalizedScores} zones={member.zones} />
+          <SpectrumChart scores={member.normalizedScores} zones={member.zones} previousScores={member.previousNormalizedScores} />
 
           {/* Spectrum Spikes (shift indicators from retake) */}
           {hasShifts && (
@@ -399,6 +400,13 @@ export default function MemberDetail({ member, flags, recommendations, onBack, o
               </div>
             </div>
           )}
+        </DashboardSection>
+      )}
+
+      {/* Profile Timeline — manager-side */}
+      {member.assessmentHistory?.length >= 2 && (
+        <DashboardSection title="Changes Over Time">
+          <ProfileTimeline history={member.assessmentHistory} />
         </DashboardSection>
       )}
 

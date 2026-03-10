@@ -156,3 +156,39 @@ export function calculateSpectrumShifts(prevScores, newScores, assignZonesFn) {
 
   return shifts;
 }
+
+/**
+ * Select the N spectrums with the largest total shift from first to latest assessment.
+ * Used to auto-select the most interesting spectrums for the timeline chart.
+ * @param {Array} history - Chronological array (oldest first) of { normalizedScores }
+ * @param {number} count - Number of spectrums to select (default 5)
+ * @returns {Array<{id: number, totalShift: number}>} Sorted by totalShift desc
+ */
+export function selectMostChangedSpectrums(history, count = 5) {
+  if (history.length < 2) return [];
+
+  const first = history[0].normalizedScores;
+  const latest = history[history.length - 1].normalizedScores;
+
+  const shifts = [];
+  for (let i = 1; i <= 14; i++) {
+    const totalShift = Math.abs((latest[i] || 0) - (first[i] || 0));
+    shifts.push({ id: i, totalShift: Math.round(totalShift * 10) / 10 });
+  }
+
+  shifts.sort((a, b) => b.totalShift - a.totalShift);
+
+  const changed = shifts.filter(s => s.totalShift > 0);
+
+  // If no spectrums changed, fall back to the 5 most extreme-scoring spectrums
+  if (changed.length === 0) {
+    const extremes = [];
+    for (let i = 1; i <= 14; i++) {
+      extremes.push({ id: i, totalShift: 0, deviation: Math.abs((latest[i] || 50) - 50) });
+    }
+    extremes.sort((a, b) => b.deviation - a.deviation);
+    return extremes.slice(0, count).map(({ id, totalShift }) => ({ id, totalShift }));
+  }
+
+  return changed.slice(0, count);
+}

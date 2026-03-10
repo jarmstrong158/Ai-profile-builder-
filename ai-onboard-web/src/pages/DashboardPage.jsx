@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/common/Layout.jsx';
+import Toast from '../components/common/Toast.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { getMyTeams, getTeam } from '../lib/teams.js';
 import { loadDashboardData } from '../lib/dashboard.js';
-import { getTeamActions } from '../lib/actions.js';
+import { getTeamActions, updateActionStatus } from '../lib/actions.js';
+import { saveAssessment } from '../lib/assessments.js';
 import TeamOverview from '../components/dashboard/TeamOverview.jsx';
 import MemberList from '../components/dashboard/MemberList.jsx';
 import MemberDetail from '../components/dashboard/MemberDetail.jsx';
@@ -39,6 +41,7 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedMember, setSelectedMember] = useState(null);
   const [schedulingTest, setSchedulingTest] = useState(false);
+  const [toast, setToast] = useState(null); // { message, type }
 
   // Load teams
   useEffect(() => {
@@ -104,15 +107,73 @@ export default function DashboardPage() {
         userId: member.userId,
         scheduledBy: user.id,
         scheduleType: 'manager',
-        scheduledFor: new Date().toISOString() // Due immediately
+        scheduledFor: new Date().toISOString()
       });
-      alert(`Retake scheduled for ${member.displayName}. They'll see it on their dashboard.`);
+      setToast({ message: `Retake scheduled for ${member.displayName}. They'll see it on their dashboard.`, type: 'success' });
     } catch (err) {
       console.error('Failed to schedule test:', err);
-      alert('Failed to schedule test: ' + err.message);
+      setToast({ message: 'Failed to schedule test: ' + err.message, type: 'error' });
     }
     setSchedulingTest(false);
   }, [selectedTeam, user]);
+
+  const handleScheduleAll = useCallback(async () => {
+    if (!selectedTeam || !user || !dashboardData?.members) return;
+    const eligible = dashboardData.members.filter(m => m.hasCompletedAssessment);
+    if (eligible.length === 0) {
+      setToast({ message: 'No eligible members to schedule.', type: 'error' });
+      return;
+    }
+    setSchedulingTest(true);
+    let succeeded = 0;
+    let failed = 0;
+    for (const member of eligible) {
+      try {
+        await scheduleRetake({
+          teamId: selectedTeam,
+          userId: member.userId,
+          scheduledBy: user.id,
+          scheduleType: 'manager',
+          scheduledFor: new Date().toISOString()
+        });
+        succeeded++;
+      } catch (err) {
+        console.error(`Failed to schedule for ${member.displayName}:`, err);
+        failed++;
+      }
+    }
+    if (failed === 0) {
+      setToast({ message: `Retake scheduled for all ${succeeded} member${succeeded !== 1 ? 's' : ''}.`, type: 'success' });
+    } else {
+      setToast({ message: `Scheduled ${succeeded}, failed ${failed}. Check console for details.`, type: 'error' });
+    }
+    setSchedulingTest(false);
+  }, [selectedTeam, user, dashboardData]);
+
+  const handleApproveRetake = useCallback(async (action) => {
+    if (!selectedTeam || !action.data?.normalizedScores) {
+      setToast({ message: 'Missing assessment data — cannot approve.', type: 'error' });
+      return;
+    }
+    try {
+      await saveAssessment({
+        userId: action.target_member_id,
+        teamId: selectedTeam,
+        coreAnswers: action.data.coreAnswers,
+        supplementaryAnswers: action.data.supplementaryAnswers,
+        normalizedScores: action.data.normalizedScores,
+        zones: action.data.zones,
+        archetypeResult: action.data.archetypeResult
+      });
+      await updateActionStatus(action.id, 'completed');
+      const memberName = dashboardData?.members?.find(m => m.userId === action.target_member_id)?.displayName || 'Member';
+      setToast({ message: `Profile updated for ${memberName}.`, type: 'success' });
+      await refreshActions();
+    } catch (err) {
+      console.error('Failed to approve retake:', err);
+      setToast({ message: 'Failed to approve: ' + err.message, type: 'error' });
+    }
+  }, [selectedTeam, dashboardData, refreshActions]);
 
   if (loading) {
     return (
@@ -302,6 +363,7 @@ export default function DashboardPage() {
                   memberFlags={dashboardData.memberFlags}
                   onSelectMember={(member, flags) => setSelectedMember({ member, flags })}
                   onScheduleTest={handleScheduleTest}
+                  onScheduleAll={handleScheduleAll}
                   schedulingTest={schedulingTest}
                 />
               )}
@@ -351,12 +413,22 @@ export default function DashboardPage() {
                   teamId={selectedTeam}
                   onActionsChange={refreshActions}
                   onScheduleTest={handleScheduleTest}
+                  onApproveRetake={handleApproveRetake}
                 />
               )}
             </div>
           </>
         )}
       </div>
+
+      {/* Toast notification */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </Layout>
   );
 }

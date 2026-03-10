@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Layout from '../components/common/Layout.jsx';
 import SpectrumChart from '../components/profile/SpectrumChart.jsx';
+import ProfileTimeline from '../components/profile/ProfileTimeline.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { getMyTeams } from '../lib/teams.js';
 import { getMyLatestAssessment, getAssessmentHistory } from '../lib/assessments.js';
@@ -30,6 +31,7 @@ const STATUS_COLORS = {
 
 export default function MyDashboardPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, loading: authLoading } = useAuth();
 
   const [assessment, setAssessment] = useState(null);
@@ -172,6 +174,21 @@ export default function MyDashboardPage() {
           </p>
         </div>
 
+        {/* Welcome banner for first-time users */}
+        {location.state?.firstAssessment && (
+          <div
+            className="mb-6 px-5 py-4 rounded-lg"
+            style={{ backgroundColor: '#22c55e15', border: '1px solid #22c55e30' }}
+          >
+            <p className="text-sm font-medium" style={{ color: '#22c55e' }}>
+              Profile Created
+            </p>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
+              Your AI interaction profile is ready. This is your personal dashboard — you'll see retake schedules, actions from your manager, and how your profile evolves over time.
+            </p>
+          </div>
+        )}
+
         {/* Retake alert — due now */}
         {(hasDueRetake || isAutoOverdue) && (
           <div
@@ -265,6 +282,13 @@ export default function MyDashboardPage() {
             </button>
           </div>
         </Section>
+
+        {/* Profile Timeline — only show with 2+ assessments */}
+        {history.length >= 2 && (
+          <Section title="Changes Over Time">
+            <ProfileTimeline history={history} />
+          </Section>
+        )}
 
         {/* AI Context */}
         <Section title="AI Context">

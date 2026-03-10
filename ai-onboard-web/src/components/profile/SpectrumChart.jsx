@@ -1,6 +1,6 @@
 import { SPECTRUM_NAMES, SPECTRUM_LABELS } from '../../data/weights.js';
 
-export default function SpectrumChart({ scores, zones }) {
+export default function SpectrumChart({ scores, zones, previousScores }) {
   if (!scores) return null;
 
   return (
@@ -10,6 +10,8 @@ export default function SpectrumChart({ scores, zones }) {
         const score = scores[specId];
         const [leftLabel, rightLabel] = SPECTRUM_LABELS[specId];
         const zone = zones[specId];
+        const shift = previousScores ? Math.round(score - (previousScores[specId] || 50)) : 0;
+        const showShift = previousScores && Math.abs(shift) >= 3;
 
         return (
           <div key={specId} className="group">
@@ -26,11 +28,21 @@ export default function SpectrumChart({ scores, zones }) {
               >
                 {SPECTRUM_NAMES[specId]}
               </span>
-              <span
-                className="text-xs font-medium"
-                style={{ color: score > 50 ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}
-              >
-                {rightLabel}
+              <span className="flex items-center gap-1.5">
+                {showShift && (
+                  <span
+                    className="text-[10px] font-medium"
+                    style={{ color: shift > 0 ? '#22c55e' : '#ef4444' }}
+                  >
+                    {shift > 0 ? `\u2191 +${shift}` : `\u2193 ${shift}`}
+                  </span>
+                )}
+                <span
+                  className="text-xs font-medium"
+                  style={{ color: score > 50 ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}
+                >
+                  {rightLabel}
+                </span>
               </span>
             </div>
             <div

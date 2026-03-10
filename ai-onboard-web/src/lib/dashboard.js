@@ -106,7 +106,20 @@ export async function loadDashboardData(teamId) {
       consecutiveRetakes,
 
       // For engine functions that expect previousSupplementaryAnswers
-      previousSupplementaryAnswers: previous?.supplementary_answers || null
+      previousSupplementaryAnswers: previous?.supplementary_answers || null,
+
+      // For shift indicators on SpectrumChart
+      previousNormalizedScores: previous?.normalized_scores || null,
+
+      // For ProfileTimeline (chronological, oldest first)
+      assessmentHistory: userAssessments.length >= 2
+        ? [...userAssessments].reverse().map(a => ({
+            normalizedScores: a.normalized_scores,
+            volatilityStatus: a.volatility_status,
+            date: new Date(a.created_at),
+            archetypeResult: a.archetype_result
+          }))
+        : []
     };
   });
 

@@ -104,17 +104,10 @@ export default function SupplementaryPage() {
         assessmentDate: new Date().toISOString()
       }).catch(() => {}); // Don't block on scheduling failure
 
-      // Redirect to profile page with data so user can see their results
-      navigate('/profile', {
+      // Redirect to personal dashboard so user sees their results
+      navigate('/my-dashboard', {
         replace: true,
-        state: {
-          profile,
-          scores: normalizedScores,
-          zones,
-          archetype: archetypeResult,
-          answers: coreAnswers,
-          savedToTeam: true
-        }
+        state: { firstAssessment: true }
       });
     } catch (err) {
       setError(err.message || 'Failed to save assessment');

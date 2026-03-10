@@ -11,7 +11,7 @@ const SEVERITY_COLORS = {
   'low': '#3b82f6'
 };
 
-export default function MemberList({ members, memberFlags, onSelectMember, onScheduleTest, schedulingTest }) {
+export default function MemberList({ members, memberFlags, onSelectMember, onScheduleTest, onScheduleAll, schedulingTest }) {
   if (!members || members.length === 0) {
     return (
       <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
@@ -20,8 +20,35 @@ export default function MemberList({ members, memberFlags, onSelectMember, onSch
     );
   }
 
+  const eligibleCount = members.filter(m => m.hasCompletedAssessment).length;
+
   return (
     <div className="flex flex-col gap-2">
+      {/* Bulk action bar */}
+      {onScheduleAll && eligibleCount > 1 && (
+        <div
+          className="flex items-center justify-between px-4 py-2.5 rounded-lg mb-1"
+          style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
+        >
+          <span className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
+            {eligibleCount} member{eligibleCount !== 1 ? 's' : ''} eligible for retake
+          </span>
+          <button
+            onClick={onScheduleAll}
+            disabled={schedulingTest}
+            className="text-xs px-3 py-1.5 rounded cursor-pointer font-medium"
+            style={{
+              backgroundColor: '#3b82f6',
+              color: 'white',
+              border: 'none',
+              opacity: schedulingTest ? 0.5 : 1
+            }}
+          >
+            {schedulingTest ? 'Scheduling...' : 'Schedule Test for All'}
+          </button>
+        </div>
+      )}
+
       {members.map((member, idx) => {
         const flags = memberFlags[idx] || [];
         const highFlags = flags.filter(f => f.severity === 'high').length;

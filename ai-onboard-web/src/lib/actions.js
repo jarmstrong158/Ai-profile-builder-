@@ -19,7 +19,9 @@ export async function createAction({
   title,
   messageToTarget = null,
   messageToPartner = null,
-  spectrumFocus = null
+  spectrumFocus = null,
+  data: actionData = null,
+  status = 'active'
 }) {
   const { data, error } = await supabase
     .from('actions')
@@ -33,7 +35,8 @@ export async function createAction({
       message_to_target: messageToTarget,
       message_to_partner: messageToPartner,
       spectrum_focus: spectrumFocus,
-      status: 'active'
+      data: actionData,
+      status
     })
     .select()
     .single();

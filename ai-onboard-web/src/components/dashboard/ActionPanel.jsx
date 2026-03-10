@@ -14,7 +14,7 @@ const STATUS_STYLES = {
   dismissed: { bg: 'var(--color-border)', color: 'var(--color-text-secondary)', label: 'Dismissed' }
 };
 
-export default function ActionPanel({ actions, members, onUpdateStatus, onScheduleTest, onDelete, updating }) {
+export default function ActionPanel({ actions, members, onUpdateStatus, onScheduleTest, onApproveRetake, onDelete, updating }) {
   const [filter, setFilter] = useState('active'); // 'active', 'completed', 'all'
 
   if (!actions || actions.length === 0) {
@@ -82,11 +82,14 @@ export default function ActionPanel({ actions, members, onUpdateStatus, onSchedu
                     <span
                       className="text-xs px-2 py-0.5 rounded-full font-medium"
                       style={{
-                        backgroundColor: action.action_type === 'pairing' ? '#8b5cf620' : '#3b82f620',
-                        color: action.action_type === 'pairing' ? '#8b5cf6' : '#3b82f6'
+                        backgroundColor: action.action_type === 'retake_request' ? '#8b5cf620'
+                          : action.action_type === 'pairing' ? '#8b5cf620' : '#3b82f620',
+                        color: action.action_type === 'retake_request' ? '#8b5cf6'
+                          : action.action_type === 'pairing' ? '#8b5cf6' : '#3b82f6'
                       }}
                     >
-                      {action.action_type === 'pairing' ? 'Pairing' :
+                      {action.action_type === 'retake_request' ? 'Profile Update Request' :
+                       action.action_type === 'pairing' ? 'Pairing' :
                        action.action_type === 'task' ? 'Task' : 'Note'}
                     </span>
                     <span
@@ -141,6 +144,27 @@ export default function ActionPanel({ actions, members, onUpdateStatus, onSchedu
                   </p>
                 </div>
 
+                {/* Retake request buttons */}
+                {action.action_type === 'retake_request' && action.status === 'active' && (
+                  <div className="flex flex-col gap-1 flex-shrink-0">
+                    <button
+                      onClick={() => onApproveRetake && onApproveRetake(action)}
+                      disabled={updating}
+                      className="px-2 py-1 rounded text-xs cursor-pointer"
+                      style={{ backgroundColor: '#22c55e20', color: '#22c55e', border: 'none' }}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      onClick={() => onUpdateStatus(action.id, 'dismissed')}
+                      disabled={updating}
+                      className="px-2 py-1 rounded text-xs cursor-pointer"
+                      style={{ backgroundColor: '#ef444420', color: '#ef4444', border: 'none' }}
+                    >
+                      Decline
+                    </button>
+                  </div>
+                )}
                 {/* Action buttons */}
                 {action.status === 'pending_review' && (
                   <div className="flex flex-col gap-1 flex-shrink-0">
@@ -172,7 +196,7 @@ export default function ActionPanel({ actions, members, onUpdateStatus, onSchedu
                     </button>
                   </div>
                 )}
-                {action.status === 'active' && (
+                {action.status === 'active' && action.action_type !== 'retake_request' && (
                   <div className="flex flex-col gap-1 flex-shrink-0">
                     <button
                       onClick={() => onUpdateStatus(action.id, 'completed')}
